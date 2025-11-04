@@ -102,7 +102,7 @@ Under arbetsperioden kommer enstaka uppföljande föreläsningar, troligtvis i a
 
 ## Presentation- och Inlämningsdatum
 
-- Halvtidsredovisning där ni visar hur långt ni har kommit är tisdagen den 18 november kl 10.25
+- Halvtidsredovisning där ni visar hur långt ni har kommit är tisdagen den 19 november kl 10.25
 - Slutredovisning är onsdag-torsdag 27 november (tider fastslås senare)
 - Preliminärt: Efter slutredovisning kan den som vill finjustera projektet fram till söndagen den 1 december kl 23.59
 - Feedback ges under första veckan i december
