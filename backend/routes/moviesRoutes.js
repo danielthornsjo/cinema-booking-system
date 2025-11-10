@@ -14,6 +14,10 @@ router.get('/movies', moviesController.getAllMovies);
 // Route för att lista specifik film
 router.get('/movies/:id', moviesController.getMovieById);
 
+// Router för att lägga till en film, kontroll av API-nyckel
+router.post('/movies', checkApiKey, moviesController.addNewMovie)
+
+// Route för att redigera en film, kontroll av API-nyckel
 router.put('/movies/:id', checkApiKey, moviesController.editMovieById)
 
 // Route för att ta bort en film, kontroll av API-nyckel

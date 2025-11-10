@@ -100,6 +100,31 @@ async function getMovieById(req, res) {
     res.json(movie);
 }
 
+async function addNewMovie(req, res) {
+    // Hitta ID för sista filmen för att generera nästa ID i kedjan
+    const lastMovie = await MovieModel.findOne().sort({ id: -1 });
+    const nextId = lastMovie ? lastMovie.id + 1 : 1;
+
+    const { title, description, genre, duration, releaseDate, posterUrl, director, cast } = req.body;
+
+    if (!title || !description || !genre || !duration) {
+        return res.status(400).json({ error: 'Missing required fields.' })
+    }
+
+    try {
+        const newMovie = await MovieModel.create({
+            id: nextId, title: title, description: description, genre: genre, duration: duration, releaseDate: releaseDate, posterUrl: posterUrl, director: director, cast: cast
+        });
+
+        if (!newMovie) {
+            res.status(404).json({ err: 'error 404' })
+        }
+        res.status(201).json(newMovie)
+    } catch (err) {
+        res.json(err);
+    };
+}
+
 async function editMovieById(req, res) {
     const id = parseInt(req.params.id);
 
@@ -129,6 +154,7 @@ export default {
     resetMovies,
     getAllMovies,
     getMovieById,
+    addNewMovie,
     editMovieById,
     deleteMovie
 }

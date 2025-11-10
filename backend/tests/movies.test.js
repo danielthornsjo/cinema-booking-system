@@ -52,6 +52,7 @@ describe('Movies API', () => {
     const movieData = {
       title: 'Test Movie',
       description: 'Test Description',
+      genre: 'Test genre',
       duration: 120,
       // ... andra fält
     };
