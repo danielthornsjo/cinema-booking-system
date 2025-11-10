@@ -1,8 +1,8 @@
 import request from 'supertest';
 
 // TODO: Importera din Express app här
-// import app from '../backend/app.js';
-const app = null; // Placeholder tills appen är implementerad
+import app from '../server.js';
+// const app = null; // Placeholder tills appen är implementerad
 
 describe('Movies API', () => {
   // Testfall för GET /movies - Hämta alla filmer
@@ -12,10 +12,10 @@ describe('Movies API', () => {
     // Kontrollera att statuskoden är 200
     // Kontrollera att response body är en array
     // Kontrollera att varje film har nödvändiga fält (t.ex. title, id)
-    
-    // const response = await request(app).get('/movies');
-    // expect(response.status).toBe(200);
-    // expect(Array.isArray(response.body)).toBe(true);
+
+    const response = await request(app).get('/movies');
+    expect(response.status).toBe(200);
+    expect(Array.isArray(response.body)).toBe(true);
   });
 
   // Testfall för GET /movies/:id - Hämta en specifik film
@@ -24,11 +24,11 @@ describe('Movies API', () => {
     // Förvänta dig att få detaljer om en specifik film
     // Kontrollera att statuskoden är 200
     // Kontrollera att response body innehåller filmens information
-    
-    // const response = await request(app).get('/movies/123');
-    // expect(response.status).toBe(200);
-    // expect(response.body).toHaveProperty('id');
-    // expect(response.body).toHaveProperty('title');
+
+    const response = await request(app).get('/movies/1');
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveProperty('id');
+    expect(response.body).toHaveProperty('title');
   });
 
   // Testfall för GET /movies/:id - Hämta film med ogiltigt ID
@@ -36,9 +36,9 @@ describe('Movies API', () => {
     // Skicka en GET-begäran till /movies/:id med ett ogiltigt ID
     // Förvänta dig att få ett 404-fel
     // Kontrollera att statuskoden är 404
-    
-    // const response = await request(app).get('/movies/invalid-id');
-    // expect(response.status).toBe(404);
+
+    const response = await request(app).get('/movies/10');
+    expect(response.status).toBe(404);
   });
 
   // Testfall för POST /movies - Skapa en ny film (kräver API-nyckel)
@@ -48,20 +48,20 @@ describe('Movies API', () => {
     // Kontrollera att statuskoden är 201
     // Kontrollera att response body innehåller den nya filmens information
     // Kontrollera att filmen har fått ett ID
-    
-    // const movieData = {
-    //   title: 'Test Movie',
-    //   description: 'Test Description',
-    //   duration: 120,
-    //   // ... andra fält
-    // };
-    // const response = await request(app)
-    //   .post('/movies')
-    //   .set('X-API-Key', 'valid-api-key')
-    //   .send(movieData);
-    // expect(response.status).toBe(201);
-    // expect(response.body).toHaveProperty('id');
-    // expect(response.body.title).toBe(movieData.title);
+
+    const movieData = {
+      title: 'Test Movie',
+      description: 'Test Description',
+      duration: 120,
+      // ... andra fält
+    };
+    const response = await request(app)
+      .post('/movies')
+      .set('X-API-Key', 'valid-api-key')
+      .send(movieData);
+    expect(response.status).toBe(201);
+    expect(response.body).toHaveProperty('id');
+    expect(response.body.title).toBe(movieData.title);
   });
 
   // Testfall för POST /movies - Försöka skapa film utan API-nyckel
@@ -69,12 +69,12 @@ describe('Movies API', () => {
     // Skicka en POST-begäran till /movies utan API-nyckel
     // Förvänta dig att få ett 401 Unauthorized-fel
     // Kontrollera att statuskoden är 401
-    
-    // const movieData = { title: 'Test Movie' };
-    // const response = await request(app)
-    //   .post('/movies')
-    //   .send(movieData);
-    // expect(response.status).toBe(401);
+
+    const movieData = { title: 'Test Movie' };
+    const response = await request(app)
+      .post('/movies')
+      .send(movieData);
+    expect(response.status).toBe(401);
   });
 
   // Testfall för POST /movies - Försöka skapa film med ogiltig API-nyckel
@@ -82,13 +82,13 @@ describe('Movies API', () => {
     // Skicka en POST-begäran till /movies med ogiltig API-nyckel
     // Förvänta dig att få ett 401 Unauthorized-fel
     // Kontrollera att statuskoden är 401
-    
-    // const movieData = { title: 'Test Movie' };
-    // const response = await request(app)
-    //   .post('/movies')
-    //   .set('X-API-Key', 'invalid-api-key')
-    //   .send(movieData);
-    // expect(response.status).toBe(401);
+
+    const movieData = { title: 'Test Movie' };
+    const response = await request(app)
+      .post('/movies')
+      .set('X-API-Key', 'invalid-api-key')
+      .send(movieData);
+    expect(response.status).toBe(401);
   });
 
   // Testfall för POST /movies - Validering av obligatoriska fält
@@ -97,13 +97,13 @@ describe('Movies API', () => {
     // Förvänta dig att få ett 400 Bad Request-fel
     // Kontrollera att statuskoden är 400
     // Kontrollera att felmeddelandet indikerar saknade fält
-    
-    // const incompleteData = { title: 'Test Movie' }; // Saknar t.ex. description
-    // const response = await request(app)
-    //   .post('/movies')
-    //   .set('X-API-Key', 'valid-api-key')
-    //   .send(incompleteData);
-    // expect(response.status).toBe(400);
+
+    const incompleteData = { title: 'Test Movie' }; // Saknar t.ex. description
+    const response = await request(app)
+      .post('/movies')
+      .set('X-API-Key', 'valid-api-key')
+      .send(incompleteData);
+    expect(response.status).toBe(400);
   });
 
   // Testfall för PUT /movies/:id - Uppdatera en befintlig film
@@ -112,14 +112,14 @@ describe('Movies API', () => {
     // Förvänta dig att filmen uppdateras och returneras
     // Kontrollera att statuskoden är 200
     // Kontrollera att response body innehåller uppdaterad information
-    
-    // const updateData = { title: 'Updated Movie Title' };
-    // const response = await request(app)
-    //   .put('/movies/123')
-    //   .set('X-API-Key', 'valid-api-key')
-    //   .send(updateData);
-    // expect(response.status).toBe(200);
-    // expect(response.body.title).toBe(updateData.title);
+
+    const updateData = { title: 'Updated Movie Title' };
+    const response = await request(app)
+      .put('/movies/1')
+      .set('X-API-Key', 'valid-api-key')
+      .send(updateData);
+    expect(response.status).toBe(200);
+    expect(response.body.title).toBe(updateData.title);
   });
 
   // Testfall för PUT /movies/:id - Uppdatera film utan API-nyckel
@@ -127,26 +127,25 @@ describe('Movies API', () => {
     // Skicka en PUT-begäran till /movies/:id utan API-nyckel
     // Förvänta dig att få ett 401 Unauthorized-fel
     // Kontrollera att statuskoden är 401
-    
-    // const updateData = { title: 'Updated Title' };
-    // const response = await request(app)
-    //   .put('/movies/123')
-    //   .send(updateData);
-    // expect(response.status).toBe(401);
-  });
 
+    const updateData = { title: 'Updated Title' };
+    const response = await request(app)
+      .put('/movies/123')
+      .send(updateData);
+    expect(response.status).toBe(401);
+  })
   // Testfall för PUT /movies/:id - Försöka uppdatera icke-existerande film
   it('should return 404 when updating non-existent movie', async () => {
     // Skicka en PUT-begäran till /movies/:id med ogiltigt ID
     // Förvänta dig att få ett 404 Not Found-fel
     // Kontrollera att statuskoden är 404
-    
-    // const updateData = { title: 'Updated Title' };
-    // const response = await request(app)
-    //   .put('/movies/non-existent-id')
-    //   .set('X-API-Key', 'valid-api-key')
-    //   .send(updateData);
-    // expect(response.status).toBe(404);
+
+    const updateData = { title: 'Updated Title' };
+    const response = await request(app)
+      .put('/movies/100')
+      .set('X-API-Key', 'valid-api-key')
+      .send(updateData);
+    expect(response.status).toBe(404);
   });
 
   // Testfall för DELETE /movies/:id - Ta bort en film
@@ -155,11 +154,11 @@ describe('Movies API', () => {
     // Förvänta dig att filmen tas bort
     // Kontrollera att statuskoden är 204 eller 200
     // Verifiera att filmen inte längre finns genom att göra en GET-begäran
-    
-    // const response = await request(app)
-    //   .delete('/movies/123')
-    //   .set('X-API-Key', 'valid-api-key');
-    // expect(response.status).toBe(204);
+
+    const response = await request(app)
+      .delete('/movies/5')
+      .set('X-API-Key', 'valid-api-key');
+    expect(response.status).toBe(204);
   });
 
   // Testfall för DELETE /movies/:id - Ta bort film utan API-nyckel
@@ -167,10 +166,10 @@ describe('Movies API', () => {
     // Skicka en DELETE-begäran till /movies/:id utan API-nyckel
     // Förvänta dig att få ett 401 Unauthorized-fel
     // Kontrollera att statuskoden är 401
-    
-    // const response = await request(app)
-    //   .delete('/movies/123');
-    // expect(response.status).toBe(401);
+
+    const response = await request(app)
+      .delete('/movies/5');
+    expect(response.status).toBe(401);
   });
 
   // Testfall för DELETE /movies/:id - Försöka ta bort icke-existerande film
@@ -178,10 +177,10 @@ describe('Movies API', () => {
     // Skicka en DELETE-begäran till /movies/:id med ogiltigt ID
     // Förvänta dig att få ett 404 Not Found-fel
     // Kontrollera att statuskoden är 404
-    
-    // const response = await request(app)
-    //   .delete('/movies/non-existent-id')
-    //   .set('X-API-Key', 'valid-api-key');
-    // expect(response.status).toBe(404);
+
+    const response = await request(app)
+      .delete('/movies/100')
+      .set('X-API-Key', 'valid-api-key');
+    expect(response.status).toBe(404);
   });
 });
