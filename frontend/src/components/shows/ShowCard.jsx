@@ -11,7 +11,6 @@ function ShowCard({ selectedMovie }) {
         fetch(`http://localhost:3000/shows/movie/${selectedMovie._id}`)
             .then(res => res.json())
             .then(data => {
-                console.log(data)
                 /* Format data for easier use */
                 const formattedData = data.map((show) => ({
                     id: show._id,
@@ -24,7 +23,7 @@ function ShowCard({ selectedMovie }) {
                         dateStyle: "medium",
                         timeStyle: "short",
                     }),
-                    price: show.pricePerSeat,
+                    price: show.price,
                     availableSeats: show.availableSeats, /* Array available seats */
                     bookedSeats: show.bookedSeats, /* Array booked seats */
                     seatsAvailable: show.availableSeats.length, /* Typeof number */

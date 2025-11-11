@@ -1,8 +1,10 @@
 import request from 'supertest';
 
 // TODO: Importera din Express app här
-// import app from '../backend/app.js';
-const app = null; // Placeholder tills appen är implementerad
+import app from '../server';
+import MovieModel from '../models/moviesModel';
+import ShowModel from '../models/showModel';
+// const app = null; // Placeholder tills appen är implementerad
 
 describe('Shows API', () => {
   // Testfall för GET /shows - Hämta alla föreställningar
@@ -12,10 +14,10 @@ describe('Shows API', () => {
     // Kontrollera att statuskoden är 200
     // Kontrollera att response body är en array
     // Kontrollera att varje föreställning har nödvändiga fält (t.ex. movieId, startTime, id)
-    
-    // const response = await request(app).get('/shows');
-    // expect(response.status).toBe(200);
-    // expect(Array.isArray(response.body)).toBe(true);
+
+    const response = await request(app).get('/shows');
+    expect(response.status).toBe(200);
+    expect(Array.isArray(response.body)).toBe(true);
   });
 
   // Testfall för GET /shows/:id - Hämta en specifik föreställning
@@ -24,12 +26,12 @@ describe('Shows API', () => {
     // Förvänta dig att få detaljer om en specifik föreställning
     // Kontrollera att statuskoden är 200
     // Kontrollera att response body innehåller föreställningens information
-    
-    // const response = await request(app).get('/shows/123');
-    // expect(response.status).toBe(200);
-    // expect(response.body).toHaveProperty('id');
-    // expect(response.body).toHaveProperty('movieId');
-    // expect(response.body).toHaveProperty('startTime');
+
+    const response = await request(app).get('/shows/1');
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveProperty('id');
+    expect(response.body).toHaveProperty('movie');
+    expect(response.body).toHaveProperty('startTime');
   });
 
   // Testfall för GET /shows/:id - Hämta föreställning med ogiltigt ID
@@ -37,9 +39,9 @@ describe('Shows API', () => {
     // Skicka en GET-begäran till /shows/:id med ett ogiltigt ID
     // Förvänta dig att få ett 404-fel
     // Kontrollera att statuskoden är 404
-    
-    // const response = await request(app).get('/shows/invalid-id');
-    // expect(response.status).toBe(404);
+
+    const response = await request(app).get('/shows/100');
+    expect(response.status).toBe(404);
   });
 
   // Testfall för GET /shows/movie/:movieId - Hämta alla föreställningar för en specifik film
@@ -49,13 +51,13 @@ describe('Shows API', () => {
     // Kontrollera att statuskoden är 200
     // Kontrollera att response body är en array
     // Kontrollera att alla föreställningar tillhör den specifika filmen (movieId matchar)
-    
-    // const response = await request(app).get('/shows/movie/123');
-    // expect(response.status).toBe(200);
-    // expect(Array.isArray(response.body)).toBe(true);
-    // response.body.forEach(show => {
-    //   expect(show.movieId).toBe('123');
-    // });
+
+    const response = await request(app).get('/shows/movie/691315440521b37e2408d6fb');
+    expect(response.status).toBe(200);
+    expect(Array.isArray(response.body)).toBe(true);
+    response.body.forEach(show => {
+      expect(show.movie.id).toBe(1);
+    });
   });
 
   // Testfall för GET /shows/movie/:movieId - Hämta föreställningar för icke-existerande film
@@ -63,9 +65,9 @@ describe('Shows API', () => {
     // Skicka en GET-begäran till /shows/movie/:movieId med ogiltigt movieId
     // Förvänta dig antingen en tom array eller 404
     // Kontrollera att statuskoden är 200 (tom array) eller 404
-    
-    // const response = await request(app).get('/shows/movie/invalid-id');
-    // expect([200, 404]).toContain(response.status);
+
+    const response = await request(app).get('/shows/movie/6912fcd027aa9337ff9a5123');
+    expect([200, 404]).toContain(response.status);
   });
 
   // Testfall för POST /shows - Skapa en ny föreställning (kräver API-nyckel)
@@ -75,20 +77,34 @@ describe('Shows API', () => {
     // Kontrollera att statuskoden är 201
     // Kontrollera att response body innehåller den nya föreställningens information
     // Kontrollera att föreställningen har fått ett ID
-    
-    // const showData = {
-    //   movieId: '123',
-    //   startTime: '2024-12-01T18:00:00Z',
-    //   availableSeats: 100,
-    //   // ... andra fält
-    // };
-    // const response = await request(app)
-    //   .post('/shows')
-    //   .set('X-API-Key', 'valid-api-key')
-    //   .send(showData);
-    // expect(response.status).toBe(201);
-    // expect(response.body).toHaveProperty('id');
-    // expect(response.body.movieId).toBe(showData.movieId);
+
+
+    const lastMovie = await MovieModel.findOne().sort({ id: -1 });
+    const nextId = lastMovie ? lastMovie.id + 1 : 1;
+    const movie = await MovieModel.create({
+
+      id: nextId,
+      title: 'Testfilm',
+      description: 'Test description',
+      genre: ['Test genre'],
+      duration: 10
+    })
+
+    const showData = {
+      movie: movie._id,
+      startTime: '2024-12-01T18:00:00Z',
+      endTime: '2024-12-01T18:00:00Z',
+      availableSeats: 100,
+      price: 220
+      // ... andra fält
+    };
+    const response = await request(app)
+      .post('/shows')
+      .set('X-API-Key', 'valid-api-key')
+      .send(showData);
+    expect(response.status).toBe(201);
+    expect(response.body).toHaveProperty('id');
+    expect(response.body.movie).toBe(showData.movie._id.toString());
   });
 
   // Testfall för POST /shows - Försöka skapa föreställning utan API-nyckel
@@ -96,12 +112,12 @@ describe('Shows API', () => {
     // Skicka en POST-begäran till /shows utan API-nyckel
     // Förvänta dig att få ett 401 Unauthorized-fel
     // Kontrollera att statuskoden är 401
-    
-    // const showData = { movieId: '123', startTime: '2024-12-01T18:00:00Z' };
-    // const response = await request(app)
-    //   .post('/shows')
-    //   .send(showData);
-    // expect(response.status).toBe(401);
+
+    const showData = { movie: '123', startTime: '2024-12-01T18:00:00Z' };
+    const response = await request(app)
+      .post('/shows')
+      .send(showData);
+    expect(response.status).toBe(401);
   });
 
   // Testfall för POST /shows - Validering av obligatoriska fält
@@ -110,13 +126,13 @@ describe('Shows API', () => {
     // Förvänta dig att få ett 400 Bad Request-fel
     // Kontrollera att statuskoden är 400
     // Kontrollera att felmeddelandet indikerar saknade fält
-    
-    // const incompleteData = { movieId: '123' }; // Saknar t.ex. startTime
-    // const response = await request(app)
-    //   .post('/shows')
-    //   .set('X-API-Key', 'valid-api-key')
-    //   .send(incompleteData);
-    // expect(response.status).toBe(400);
+
+    const incompleteData = { movieId: '123' }; // Saknar t.ex. startTime
+    const response = await request(app)
+      .post('/shows')
+      .set('X-API-Key', 'valid-api-key')
+      .send(incompleteData);
+    expect(response.status).toBe(400);
   });
 
   // Testfall för POST /shows - Validering av ogiltigt movieId
@@ -124,16 +140,15 @@ describe('Shows API', () => {
     // Skicka en POST-begäran till /shows med ogiltigt movieId
     // Förvänta dig att få ett 400 Bad Request-fel
     // Kontrollera att statuskoden är 400
-    
-    // const showData = {
-    //   movieId: 'non-existent-movie',
-    //   startTime: '2024-12-01T18:00:00Z',
-    // };
-    // const response = await request(app)
-    //   .post('/shows')
-    //   .set('X-API-Key', 'valid-api-key')
-    //   .send(showData);
-    // expect(response.status).toBe(400);
+    const showData = {
+      movieId: 'non-existent-movie',
+      startTime: '2024-12-01T18:00:00Z',
+    };
+    const response = await request(app)
+      .post('/shows')
+      .set('X-API-Key', 'valid-api-key')
+      .send(showData);
+    expect(response.status).toBe(400);
   });
 
   // Testfall för PUT /shows/:id - Uppdatera en befintlig föreställning
@@ -142,14 +157,13 @@ describe('Shows API', () => {
     // Förvänta dig att föreställningen uppdateras och returneras
     // Kontrollera att statuskoden är 200
     // Kontrollera att response body innehåller uppdaterad information
-    
-    // const updateData = { startTime: '2024-12-01T20:00:00Z' };
-    // const response = await request(app)
-    //   .put('/shows/123')
-    //   .set('X-API-Key', 'valid-api-key')
-    //   .send(updateData);
-    // expect(response.status).toBe(200);
-    // expect(response.body.startTime).toBe(updateData.startTime);
+    const updateData = { startTime: '2024-12-01T20:00:00.000Z' };
+    const response = await request(app)
+      .put('/shows/1')
+      .set('X-API-Key', 'valid-api-key')
+      .send(updateData);
+    expect(response.status).toBe(200);
+    expect(response.body.startTime).toBe(updateData.startTime);
   });
 
   // Testfall för PUT /shows/:id - Uppdatera föreställning utan API-nyckel
@@ -157,12 +171,12 @@ describe('Shows API', () => {
     // Skicka en PUT-begäran till /shows/:id utan API-nyckel
     // Förvänta dig att få ett 401 Unauthorized-fel
     // Kontrollera att statuskoden är 401
-    
-    // const updateData = { startTime: '2024-12-01T20:00:00Z' };
-    // const response = await request(app)
-    //   .put('/shows/123')
-    //   .send(updateData);
-    // expect(response.status).toBe(401);
+
+    const updateData = { startTime: '2024-12-01T20:00:00Z' };
+    const response = await request(app)
+      .put('/shows/6912fcd027aa9337ff9a5123')
+      .send(updateData);
+    expect(response.status).toBe(401);
   });
 
   // Testfall för PUT /shows/:id - Försöka uppdatera icke-existerande föreställning
@@ -170,13 +184,13 @@ describe('Shows API', () => {
     // Skicka en PUT-begäran till /shows/:id med ogiltigt ID
     // Förvänta dig att få ett 404 Not Found-fel
     // Kontrollera att statuskoden är 404
-    
-    // const updateData = { startTime: '2024-12-01T20:00:00Z' };
-    // const response = await request(app)
-    //   .put('/shows/non-existent-id')
-    //   .set('X-API-Key', 'valid-api-key')
-    //   .send(updateData);
-    // expect(response.status).toBe(404);
+
+    const updateData = { startTime: '2024-12-01T20:00:00Z' };
+    const response = await request(app)
+      .put('/shows/123')
+      .set('X-API-Key', 'valid-api-key')
+      .send(updateData);
+    expect(response.status).toBe(404);
   });
 
   // Testfall för DELETE /shows/:id - Ta bort en föreställning
@@ -185,11 +199,11 @@ describe('Shows API', () => {
     // Förvänta dig att föreställningen tas bort
     // Kontrollera att statuskoden är 204 eller 200
     // Verifiera att föreställningen inte längre finns genom att göra en GET-begäran
-    
-    // const response = await request(app)
-    //   .delete('/shows/123')
-    //   .set('X-API-Key', 'valid-api-key');
-    // expect(response.status).toBe(204);
+
+    const response = await request(app)
+      .delete('/shows/2')
+      .set('X-API-Key', 'valid-api-key');
+    expect(response.status).toBe(204);
   });
 
   // Testfall för DELETE /shows/:id - Ta bort föreställning utan API-nyckel
@@ -197,10 +211,10 @@ describe('Shows API', () => {
     // Skicka en DELETE-begäran till /shows/:id utan API-nyckel
     // Förvänta dig att få ett 401 Unauthorized-fel
     // Kontrollera att statuskoden är 401
-    
-    // const response = await request(app)
-    //   .delete('/shows/123');
-    // expect(response.status).toBe(401);
+
+    const response = await request(app)
+      .delete('/shows/123');
+    expect(response.status).toBe(401);
   });
 
   // Testfall för DELETE /shows/:id - Försöka ta bort icke-existerande föreställning
@@ -208,10 +222,10 @@ describe('Shows API', () => {
     // Skicka en DELETE-begäran till /shows/:id med ogiltigt ID
     // Förvänta dig att få ett 404 Not Found-fel
     // Kontrollera att statuskoden är 404
-    
-    // const response = await request(app)
-    //   .delete('/shows/non-existent-id')
-    //   .set('X-API-Key', 'valid-api-key');
-    // expect(response.status).toBe(404);
+
+    const response = await request(app)
+      .delete('/shows/100')
+      .set('X-API-Key', 'valid-api-key');
+    expect(response.status).toBe(404);
   });
 });
