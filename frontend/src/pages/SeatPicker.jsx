@@ -1,0 +1,115 @@
+import { useEffect, useState } from "react";
+import { useLocation, useParams } from "react-router-dom";
+import BookingForm from "../components/booking/BookingForm";
+import { IoIosArrowBack } from "react-icons/io";
+import { Link } from "react-router-dom";
+
+function SeatPicker() {
+    const { showId } = useParams();
+    const [selectedShow, setSelectedShow] = useState(null);
+    const location = useLocation();
+    const { selectedMovie } = location.state;
+    const [selectedSeats, setSelectedSeats] = useState([]);
+    const [totalPrice, setTotalPrice] = useState(0);
+
+    /* Fastställ pris/bokning beroende på hur många platser man bokat */
+    useEffect(() => {
+        setTotalPrice(selectedSeats.length * selectedShow?.price)
+    }, [selectedSeats, selectedShow?.price]);
+
+
+    useEffect(() => {
+        if (!showId) return;
+
+        fetch(`https://cinema-api.henrybergstrom.com/api/v1/shows/${showId}`)
+            .then(res => res.json())
+            .then(data => {
+                /* Format data for easier use */
+                const formattedShow = {
+                    movieTitle: data.movie.title,
+                    id: data._id,
+                    room: data.roomNumber,
+                    start: new Date(data.startTime).toLocaleString("sv-SE", {
+                        dateStyle: "medium",
+                        timeStyle: "short",
+                    }),
+                    end: new Date(data.endTime).toLocaleString("sv-SE", {
+                        dateStyle: "medium",
+                        timeStyle: "short",
+                    }),
+                    price: data.pricePerSeat,
+                    availableSeats: data.availableSeats,
+                    bookedSeats: data.bookedSeats,
+                    seatsAvailable: data.availableSeats.length,
+                    seatsBooked: data.bookedSeats.length,
+                };
+                setSelectedShow(formattedShow);
+            });
+    }, [showId])
+
+    if (!selectedShow) return <p>Laddar föreställning...</p>
+
+    /* Bokade och tillgängliga säten i en array för att kunna mappa ut salongen korrekt enligt rader och platsnummer */
+    const allSeats = [
+        ...selectedShow.bookedSeats.map(seat => ({ id: seat, status: "booked" })),
+        ...selectedShow.availableSeats.map(seat => ({ id: seat, status: "available" }))
+    ];
+
+    /* Tar en platskod och delar upp den i ett objekt för att kunna användas till att sortera sätena efter rader och bokstäver */
+    function parseSeat(seat) {
+        const match = seat.match(/^([A-Za-z]+)(\d+)$/);
+        return {
+            row: match[1],
+            num: parseInt(match[2], 10)
+        }
+    }
+
+    /* Sortera säten i radordning och sedan i nummerordning i varje rad */
+    allSeats.sort((a, b) => {
+        const pa = parseSeat(a.id);
+        const pb = parseSeat(b.id);
+        if (pa.row === pb.row) return pa.num - pb.num;
+        return pa.row.localeCompare(pb.row)
+    })
+
+    /* Toggle seat in seatpicker */
+    const toggleSeat = (seat) => {
+        setSelectedSeats((prev) => prev.includes(seat) ? prev.filter((s) => s !== seat) : [...prev, seat]);
+        setTotalPrice(selectedSeats.length * selectedShow.price);
+    }
+
+
+    return (
+        <>
+            <div className="px-4 flex items-center justify-between max-w-[1200px] mx-auto md:px-0 text-text-primary">
+                <Link to={`/movie/${selectedMovie._id}`} className="bg-linear-to-br from-gradient via-gradient1 to-gradient2 px-2 text-2xl font-bold py-1 rounded-2xl button w-auto z-10">
+                    <IoIosArrowBack />
+                </Link>
+                <p className="text-3xl text-right md:text-5xl font-heading md:text-center flex-1 md:-translate-x-6">{selectedMovie.title}</p>
+            </div>
+            <section className="w-[90%] mx-auto  text-text-primary flex flex-col justify-center">
+                {/* Seatpicker */}
+                <div className="bg-text-secondary w-full md:w-[550px] rounded-t-full mx-auto h-5 mt-10 mb-20 relative">
+                    <div className="w-full bg-white h-5 back shadow blur absolute top-4"></div>
+                </div>
+                <div className="grid grid-cols-9 gap-2 md:gap-4 max-w-[800px] mx-auto">
+                    {allSeats.map(seat => (
+                        <div key={seat.id} onClick={() => seat.status === "available" && toggleSeat(seat.id)}
+                            className={`w-8 h-8 md:w-12 md:h-12 flex items-center justify-center rounded-b-lg md:rounded-b-xl md:text-xl ${seat.status === "booked"
+                                ? "bg-gradient-to-br from-red-800 via-red-600 to-red-400 cursor-not-allowed"
+                                : selectedSeats.includes(seat.id)
+                                    ? "bg-gradient-to-br from-blue-800 via-blue-600 to-blue-400 cursor-pointer"
+                                    : "bg-gradient-to-br from-green-800 via-green-600 to-green-400 hover:from-yellow-800 hover:via-yellow-600 hover:to-yellow-600 cursor-pointer"
+                                }`}>
+                            {seat.id}
+
+                        </div>
+                    ))}
+                </div>
+                <BookingForm selectedShow={selectedShow} selectedSeats={selectedSeats} selectedMovie={selectedMovie} totalPrice={totalPrice} />
+            </section >
+
+        </>
+    )
+}
+export default SeatPicker;

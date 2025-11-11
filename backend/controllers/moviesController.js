@@ -92,7 +92,7 @@ async function getAllMovies(req, res) {
 
 async function getMovieById(req, res) {
     const id = req.params.id;
-    const movie = await MovieModel.findOne({ id });
+    const movie = await MovieModel.findOne({ _id: id });
 
     if (!movie) {
         return res.status(404).json({ error: `Filmen med id ${id} existerar inte` });

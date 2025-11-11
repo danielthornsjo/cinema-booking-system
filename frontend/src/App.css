@@ -1,0 +1,72 @@
+@import 'tailwindcss';
+
+
+@theme {
+    --color-bg-primary: #090900;
+    --color-bg-secondary: #12141C;
+    --color-text-primary: #f1f2f3;
+    --color-text-secondary: #a7abb7;
+    --color-gradient: #2F1A6D;
+    --color-gradient1: #5A30AC;
+    --color-gradient2: #321B6A;
+
+    --font-heading: 'Bebas Neue', sans-serif;
+    --font-primary: 'Poppins', sans-serif;
+
+}
+@layer components {
+    .header {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 1rem;
+        
+    }
+
+    h1 {
+        color: var(--color-text-primary);
+        font-family: 'Bebas Neue';
+    }
+
+    #input-search {
+        background-color: var(--color-bg-primary);
+        opacity: .5;
+        border-radius: 1rem;
+        border: 2px solid rgba(255,255,255,0.3);
+        width: 95%;
+        font-family: var(--font-primary);
+        
+        input[type="search"] {
+            border: 2px solid transparent;
+            color: var(--color-text-primary);
+            font-size: 1.1rem;
+            padding: .5rem 1rem;
+            border-radius: 1rem;
+            outline: none;
+            transition: all .5s ease;
+
+            &:focus {
+                border: 2px solid #b996ff;
+                opacity: 1;
+            }
+        }
+    }
+
+    button {
+        background: linear-gradient(90deg, var(--color-gradient) 2%  , var(--color-gradient1) 52%, var(--color-gradient2));
+        box-shadow: 0 0 8px var(--color-gradient1);
+        border: 1px solid var(--color-gradient1);
+        width: 95%;
+        color: var(--color-text-primary);
+        padding: .5rem;
+        border-radius: 1rem;
+        text-transform: uppercase;
+        font-family: var(--font-primary);
+        font-weight: 600;
+        transition: all .5s ease;
+        cursor: pointer;
+
+        &:hover {
+            transform: scale(1.05);
+        }
+    }
+} 
