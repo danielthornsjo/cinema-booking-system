@@ -11,25 +11,18 @@ function ShowCard({ selectedMovie }) {
         fetch(`http://localhost:3000/shows/movie/${selectedMovie._id}`)
             .then(res => res.json())
             .then(data => {
-                /* Format data for easier use */
-                const formattedData = data.map((show) => ({
-                    id: show._id,
-                    room: show.roomNumber,
-                    start: new Date(show.startTime).toLocaleString("sv-SE", {
+                const formatted = data.map(show => ({
+                    ...show,
+                    formattedStart: new Date(show.start).toLocaleString("sv-SE", {
                         dateStyle: "medium",
                         timeStyle: "short",
                     }),
-                    end: new Date(show.endTime).toLocaleString("sv-SE", {
+                    formattedEnd: new Date(show.end).toLocaleString("sv-SE", {
                         dateStyle: "medium",
                         timeStyle: "short",
                     }),
-                    price: show.price,
-                    availableSeats: show.availableSeats, /* Array available seats */
-                    bookedSeats: show.bookedSeats, /* Array booked seats */
-                    seatsAvailable: show.availableSeats.length, /* Typeof number */
-                    seatsBooked: show.bookedSeats.length, /* Typeof number */
-                }))
-                setAllShows(formattedData)
+                }));
+                setAllShows(formatted)
             })
     }, [selectedMovie]);
 
@@ -48,7 +41,7 @@ function ShowCard({ selectedMovie }) {
                                     text-center text-lg font-semibold tracking-wider rounded-2xl  ${selectedShow?.id === show.id ? "bg-gradient-to-r from-emerald-500 to-emerald-900"
                                         : "bg-gradient-to-br from-gradient via-gradient1 to-gradient2"
                                     }`}>
-                                {show.start}
+                                {show.formattedStart}
                             </button>
                         ))}
                     </div>

@@ -21,14 +21,15 @@ function SeatPicker() {
     useEffect(() => {
         if (!showId) return;
 
-        fetch(`https://cinema-api.henrybergstrom.com/api/v1/shows/${showId}`)
+        fetch(`http://localhost:3000/shows/${showId}`)
             .then(res => res.json())
             .then(data => {
                 /* Format data for easier use */
                 const formattedShow = {
                     movieTitle: data.movie.title,
                     id: data._id,
-                    room: data.roomNumber,
+                    room: data.hall.roomNumber,
+                    seats: data.hall.seatMap,
                     start: new Date(data.startTime).toLocaleString("sv-SE", {
                         dateStyle: "medium",
                         timeStyle: "short",
@@ -37,23 +38,18 @@ function SeatPicker() {
                         dateStyle: "medium",
                         timeStyle: "short",
                     }),
-                    price: data.pricePerSeat,
-                    availableSeats: data.availableSeats,
-                    bookedSeats: data.bookedSeats,
-                    seatsAvailable: data.availableSeats.length,
-                    seatsBooked: data.bookedSeats.length,
+                    price: data.price,
                 };
                 setSelectedShow(formattedShow);
+
             });
     }, [showId])
 
     if (!selectedShow) return <p>Laddar föreställning...</p>
 
-    /* Bokade och tillgängliga säten i en array för att kunna mappa ut salongen korrekt enligt rader och platsnummer */
     const allSeats = [
-        ...selectedShow.bookedSeats.map(seat => ({ id: seat, status: "booked" })),
-        ...selectedShow.availableSeats.map(seat => ({ id: seat, status: "available" }))
-    ];
+        ...selectedShow.seats.map(seat => ({ id: seat.seatId, booked: seat.booked }))
+    ]
 
     /* Tar en platskod och delar upp den i ett objekt för att kunna användas till att sortera sätena efter rader och bokstäver */
     function parseSeat(seat) {
@@ -75,7 +71,6 @@ function SeatPicker() {
     /* Toggle seat in seatpicker */
     const toggleSeat = (seat) => {
         setSelectedSeats((prev) => prev.includes(seat) ? prev.filter((s) => s !== seat) : [...prev, seat]);
-        setTotalPrice(selectedSeats.length * selectedShow.price);
     }
 
 
@@ -94,16 +89,10 @@ function SeatPicker() {
                 </div>
                 <div className="grid grid-cols-9 gap-2 md:gap-4 max-w-[800px] mx-auto">
                     {allSeats.map(seat => (
-                        <div key={seat.id} onClick={() => seat.status === "available" && toggleSeat(seat.id)}
-                            className={`w-8 h-8 md:w-12 md:h-12 flex items-center justify-center rounded-b-lg md:rounded-b-xl md:text-xl ${seat.status === "booked"
-                                ? "bg-gradient-to-br from-red-800 via-red-600 to-red-400 cursor-not-allowed"
-                                : selectedSeats.includes(seat.id)
-                                    ? "bg-gradient-to-br from-blue-800 via-blue-600 to-blue-400 cursor-pointer"
-                                    : "bg-gradient-to-br from-green-800 via-green-600 to-green-400 hover:from-yellow-800 hover:via-yellow-600 hover:to-yellow-600 cursor-pointer"
-                                }`}>
-                            {seat.id}
-
-                        </div>
+                        <div key={seat.id} onClick={() => !seat.booked && toggleSeat(seat.id)} className={`w-8 h-8 md:w-12 md:h-12 flex items-center justify-center rounded-b-lg md:rounded-b-xl md:text-xl ${seat.booked ? "bg-gradient-to-br from-red-800 via-red-600 to-red-400 cursor-not-allowed"
+                            : selectedSeats.includes(seat.id)
+                                ? "bg-gradient-to-br from-blue-800 via-blue-600 to-blue-400 cursor-pointer"
+                                : "bg-gradient-to-br from-green-800 via-green-600 to-green-400 hover:from-yellow-800 hover:via-yellow-600 hover:to-yellow-600 cursor-pointer"}`}>{seat.id}</div>
                     ))}
                 </div>
                 <BookingForm selectedShow={selectedShow} selectedSeats={selectedSeats} selectedMovie={selectedMovie} totalPrice={totalPrice} />

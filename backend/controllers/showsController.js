@@ -1,10 +1,12 @@
 import MovieModel from "../models/moviesModel.js";
 import ShowModel from "../models/showModel.js";
+import HallModel from "../models/hallsModel.js";
 
 async function resetShows(req, res) {
     await ShowModel.deleteMany({});
 
     const movies = await MovieModel.find();
+    const halls = await HallModel.find();
 
     if (movies.length === 0) {
         return res.status(400).json({ error: 'Inga filmer finns i databasen' });
@@ -17,6 +19,7 @@ async function resetShows(req, res) {
             movie: movies[0]._id,
             startTime: '2025-11-11T21:00:00.000Z',
             endTime: '2025-11-11T23:00:00.000Z',
+            hall: halls[0]._id,
             availableSeats: ['A1', 'A2', 'A3'],
             bookedSeats: ['A4', 'A5', 'A6'],
             price: 120
@@ -26,6 +29,7 @@ async function resetShows(req, res) {
             movie: movies[0]._id,
             startTime: '2025-11-11T14:30:00.000Z',
             endTime: '2025-11-11T16:00:00.000Z',
+            hall: halls[1]._id,
             availableSeats: ['A1', 'A2', 'A3'],
             bookedSeats: ['A4', 'A5', 'A6'],
             price: 120
@@ -35,6 +39,7 @@ async function resetShows(req, res) {
             movie: movies[1]._id,
             startTime: '2025-11-11T21:00:00.000Z',
             endTime: '2025-11-11T23:00:00.000Z',
+            hall: halls[0]._id,
             availableSeats: ['A1', 'A2', 'A3'],
             bookedSeats: ['A4', 'A5', 'A6'],
             price: 120
@@ -46,14 +51,14 @@ async function resetShows(req, res) {
 }
 
 async function getAllShows(req, res) {
-    const shows = await ShowModel.find().populate('movie');
+    const shows = await ShowModel.find().populate('movie').populate('hall');
 
     res.status(200).json(shows);
 }
 
 async function getShowWithId(req, res) {
     const id = req.params.id
-    const show = await ShowModel.findOne({ id });
+    const show = await ShowModel.findOne({ _id: id }).populate('movie').populate('hall');
 
     if (!show) {
         return res.status(404).json({ error: `Finns ingen show med id ${id}.` })
@@ -64,19 +69,35 @@ async function getShowWithId(req, res) {
 
 async function getMovieWithShow(req, res) {
     const movieId = req.params.id;
-    const showForMovie = await ShowModel.find({ movie: movieId }).populate('movie');
+    const showForMovie = await ShowModel.find({ movie: movieId }).populate('hall').populate('movie').lean();
 
     if (showForMovie.length === 0) {
         return res.status(404).json({ error: 'Finns ingen show för filmen' })
     }
 
-    res.json(showForMovie);
+    const formatShow = showForMovie.map(show => ({
+        id: show._id.toString(),
+        start: show.startTime,
+        end: show.endTime,
+        price: show.price,
+        hall: {
+            id: show.hall._id,
+            roomNumber: show.hall.roomNumber,
+            seatMap: show.hall.seatMap
+        },
+        movie: {
+            id: show.movie._id,
+            title: show.movie.title,
+            poster: show.movie.posterUrl
+        }
+    }))
+
+    res.json(formatShow);
 }
 
 async function addNewShow(req, res) {
     const lastShow = await ShowModel.findOne().sort({ id: -1 });
     const nextId = lastShow ? lastShow.id + 1 : 1;
-
 
     const { movie, hall, startTime, endTime, availableSeats, bookedSeats, price } = req.body;
 
