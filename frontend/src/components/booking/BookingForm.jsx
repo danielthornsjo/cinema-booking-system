@@ -7,6 +7,7 @@ function BookingForm({ selectedShow, selectedSeats, selectedMovie, totalPrice })
     const [message, setMessage] = useState('');
     const [renderModal, setRenderModal] = useState(false)
 
+
     const handleSubmit = async (event) => {
         event.preventDefault();
 
@@ -19,7 +20,7 @@ function BookingForm({ selectedShow, selectedSeats, selectedMovie, totalPrice })
         };
 
         try {
-            const response = await fetch("https://cinema-api.henrybergstrom.com/api/v1/bookings", {
+            const response = await fetch("http://localhost:3000/bookings", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(data),
@@ -55,7 +56,6 @@ function BookingForm({ selectedShow, selectedSeats, selectedMovie, totalPrice })
 
     return (
         <>
-
             {/* Info about selected show */}
             < div className="grid md:grid-cols-2 gap-8 mx-auto mt-8 md:mt-20" >
                 <div>
@@ -65,7 +65,8 @@ function BookingForm({ selectedShow, selectedSeats, selectedMovie, totalPrice })
                     <p>Start: {selectedShow.start}</p>
                     <p>Slut: {selectedShow.end}</p>
                     <p>Pris: {selectedShow.price} kr</p>
-                    <p>Lediga platser: {selectedShow.seatsAvailable}</p>
+                    {/* <p>Lediga platser: {selectedShow.seats.seatId}</p> */}
+                    <p>Lediga platser: {selectedShow.seats.filter(seat => !seat.booked).length}</p>
                 </div>
                 <div className="flex flex-col gap-4">
                     <p>Boka plats: {selectedSeats.length > 0 ? (

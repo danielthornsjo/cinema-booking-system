@@ -6,7 +6,7 @@ import MovieModel from '../models/moviesModel.js';
 const router = express.Router();
 
 // Route för att tömma databasen, och fylla på med data
-router.get('/reset/movies', moviesController.resetMovies);
+// router.get('/reset/movies', moviesController.resetMovies);
 
 // Route för att lista alla filmer
 router.get('/movies', moviesController.getAllMovies);

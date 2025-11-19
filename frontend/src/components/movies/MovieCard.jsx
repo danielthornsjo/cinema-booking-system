@@ -28,7 +28,7 @@ function MovieCard({ selectedMovie }) {
                         <p className="text-md">{selectedMovie.releaseDate ? selectedMovie.releaseDate.slice(0, 10) : "Datum saknas"}</p>
 
                         <h1 className="text-2xl tracking-">Producent: </h1>
-                        <p className="text-md">{selectedMovie.director}</p>
+                        <p className="text-md">{selectedMovie.directors}</p>
 
                         <h1 className="text-2xl tracking-">Speltid: </h1>
                         <p className="text-md">{selectedMovie.duration} minuter</p>

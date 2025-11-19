@@ -2,56 +2,58 @@ import MovieModel from "../models/moviesModel.js";
 import ShowModel from "../models/showModel.js";
 import HallModel from "../models/hallsModel.js";
 
-async function resetShows(req, res) {
-    await ShowModel.deleteMany({});
+// async function resetShows(req, res) {
+//     await ShowModel.deleteMany({});
 
-    const movies = await MovieModel.find();
-    const halls = await HallModel.find();
+//     const movies = await MovieModel.find();
+//     const halls = await HallModel.find();
 
-    if (movies.length === 0) {
-        return res.status(400).json({ error: 'Inga filmer finns i databasen' });
-    }
-    let nextId = 1;
+//     if (movies.length === 0) {
+//         return res.status(400).json({ error: 'Inga filmer finns i databasen' });
+//     }
+//     let nextId = 1;
 
-    const shows = [
-        {
-            id: nextId++,
-            movie: movies[0]._id,
-            startTime: '2025-11-11T21:00:00.000Z',
-            endTime: '2025-11-11T23:00:00.000Z',
-            hall: halls[0]._id,
-            availableSeats: ['A1', 'A2', 'A3'],
-            bookedSeats: ['A4', 'A5', 'A6'],
-            price: 120
-        },
-        {
-            id: nextId++,
-            movie: movies[0]._id,
-            startTime: '2025-11-11T14:30:00.000Z',
-            endTime: '2025-11-11T16:00:00.000Z',
-            hall: halls[1]._id,
-            availableSeats: ['A1', 'A2', 'A3'],
-            bookedSeats: ['A4', 'A5', 'A6'],
-            price: 120
-        },
-        {
-            id: nextId++,
-            movie: movies[1]._id,
-            startTime: '2025-11-11T21:00:00.000Z',
-            endTime: '2025-11-11T23:00:00.000Z',
-            hall: halls[0]._id,
-            availableSeats: ['A1', 'A2', 'A3'],
-            bookedSeats: ['A4', 'A5', 'A6'],
-            price: 120
-        },
-    ];
+//     const shows = [
+//         {
+//             id: nextId++,
+//             movie: movies[0]._id,
+//             startTime: '2025-11-11T21:00:00.000Z',
+//             endTime: '2025-11-11T23:00:00.000Z',
+//             hall: halls[0]._id,
+//             availableSeats: ['A1', 'A2', 'A3'],
+//             bookedSeats: ['A4', 'A5', 'A6'],
+//             price: 120
+//         },
+//         {
+//             id: nextId++,
+//             movie: movies[0]._id,
+//             startTime: '2025-11-11T14:30:00.000Z',
+//             endTime: '2025-11-11T16:00:00.000Z',
+//             hall: halls[1]._id,
+//             availableSeats: ['A1', 'A2', 'A3'],
+//             bookedSeats: ['A4', 'A5', 'A6'],
+//             price: 120
+//         },
+//         {
+//             id: nextId++,
+//             movie: movies[1]._id,
+//             startTime: '2025-11-11T21:00:00.000Z',
+//             endTime: '2025-11-11T23:00:00.000Z',
+//             hall: halls[0]._id,
+//             availableSeats: ['A1', 'A2', 'A3'],
+//             bookedSeats: ['A4', 'A5', 'A6'],
+//             price: 120
+//         },
+//     ];
 
-    await ShowModel.insertMany(shows);
-    res.status(200).json({ message: 'Databasen är seedad med shower för filmer' })
-}
+//     await ShowModel.insertMany(shows);
+//     res.status(200).json({ message: 'Databasen är seedad med shower för filmer' })
+// }
 
 async function getAllShows(req, res) {
     const shows = await ShowModel.find().populate('movie').populate('hall');
+
+    console.log(shows);
 
     res.status(200).json(shows);
 }
@@ -140,7 +142,7 @@ async function deleteShowWithId(req, res) {
 }
 
 export default {
-    resetShows,
+    // resetShows,
     getAllShows,
     getShowWithId,
     getMovieWithShow,

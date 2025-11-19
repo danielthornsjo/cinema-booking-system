@@ -8,7 +8,7 @@ const movieSchema = new mongoose.Schema({
     duration: { type: Number, required: true },
     releaseDate: { type: Date },
     posterUrl: { type: String },
-    director: { type: String },
+    directors: { type: [String] },
     cast: { type: [String] },
     createdAt: { type: Date, default: Date.now }
 });
