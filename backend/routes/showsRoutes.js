@@ -4,9 +4,6 @@ import checkApiKey from '../middleware/checkApiKey.js';
 
 const router = express.Router();
 
-// Route för att tömma databasen och fylla på med föreställningar
-// router.get('/reset/shows', checkApiKey, showsController.resetShows);
-
 // Route för att lista alla föreställningar
 router.get('/shows', showsController.getAllShows);
 

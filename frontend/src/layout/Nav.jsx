@@ -15,6 +15,7 @@ function Nav({ renderNav, setRenderNav }) {
                 <ul className="text-center text-4xl gap-8  font-primary flex flex-col">
                     <li><Link to="/" onClick={() => setRenderNav(false)}>Hem</Link></li>
                     <li><Link to="/movies" onClick={() => setRenderNav(false)}>Våra filmer</Link></li>
+                    <li><Link to="/login" onClick={() => setRenderNav(false)}>Logga in</Link></li>
                 </ul>
             </nav>
         </>

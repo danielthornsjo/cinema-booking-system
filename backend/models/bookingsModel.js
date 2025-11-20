@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 const bookingSchema = new mongoose.Schema({
-    id: { type: Number, unique: true, index: true },
+    id: { type: Number, min: 1000, unique: true, index: true },
     email: { type: String, required: true },
     show: { type: mongoose.Schema.Types.ObjectId, ref: 'Show', required: true },
     seats: [{ type: String, required: true }],
