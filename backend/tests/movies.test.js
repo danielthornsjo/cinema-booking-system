@@ -25,7 +25,7 @@ describe('Movies API', () => {
     // Kontrollera att statuskoden är 200
     // Kontrollera att response body innehåller filmens information
 
-    const response = await request(app).get('/movies/1');
+    const response = await request(app).get('/movies/691ed77fa117e6cdbe8dc99c');
     expect(response.status).toBe(200);
     expect(response.body).toHaveProperty('id');
     expect(response.body).toHaveProperty('title');
@@ -37,7 +37,7 @@ describe('Movies API', () => {
     // Förvänta dig att få ett 404-fel
     // Kontrollera att statuskoden är 404
 
-    const response = await request(app).get('/movies/10');
+    const response = await request(app).get('/movies/691ed77fa117e6cdbe8dc991');
     expect(response.status).toBe(404);
   });
 
@@ -99,9 +99,8 @@ describe('Movies API', () => {
     // Kontrollera att statuskoden är 400
     // Kontrollera att felmeddelandet indikerar saknade fält
 
-    const incompleteData = { title: 'Test Movie' }; // Saknar t.ex. description
-    const response = await request(app)
-      .post('/movies')
+    const incompleteData = { title: 'Test Movie' }; // Saknar .ex. description
+    const response = await request(app).post('/movies')
       .set('X-API-Key', 'valid-api-key')
       .send(incompleteData);
     expect(response.status).toBe(400);
@@ -116,7 +115,7 @@ describe('Movies API', () => {
 
     const updateData = { title: 'Updated Movie Title' };
     const response = await request(app)
-      .put('/movies/1')
+      .put('/movies/10')
       .set('X-API-Key', 'valid-api-key')
       .send(updateData);
     expect(response.status).toBe(200);
@@ -134,7 +133,8 @@ describe('Movies API', () => {
       .put('/movies/123')
       .send(updateData);
     expect(response.status).toBe(401);
-  })
+  });
+
   // Testfall för PUT /movies/:id - Försöka uppdatera icke-existerande film
   it('should return 404 when updating non-existent movie', async () => {
     // Skicka en PUT-begäran till /movies/:id med ogiltigt ID
@@ -143,7 +143,7 @@ describe('Movies API', () => {
 
     const updateData = { title: 'Updated Title' };
     const response = await request(app)
-      .put('/movies/100')
+      .put('/movies/100000')
       .set('X-API-Key', 'valid-api-key')
       .send(updateData);
     expect(response.status).toBe(404);
@@ -157,7 +157,7 @@ describe('Movies API', () => {
     // Verifiera att filmen inte längre finns genom att göra en GET-begäran
 
     const response = await request(app)
-      .delete('/movies/5')
+      .delete('/movies/15')
       .set('X-API-Key', 'valid-api-key');
     expect(response.status).toBe(204);
   });
@@ -169,7 +169,7 @@ describe('Movies API', () => {
     // Kontrollera att statuskoden är 401
 
     const response = await request(app)
-      .delete('/movies/5');
+      .delete('/movies/123');
     expect(response.status).toBe(401);
   });
 
@@ -180,7 +180,7 @@ describe('Movies API', () => {
     // Kontrollera att statuskoden är 404
 
     const response = await request(app)
-      .delete('/movies/100')
+      .delete('/movies/1000')
       .set('X-API-Key', 'valid-api-key');
     expect(response.status).toBe(404);
   });

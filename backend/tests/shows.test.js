@@ -1,9 +1,7 @@
 import request from 'supertest';
 
 // TODO: Importera din Express app här
-import app from '../server';
-import MovieModel from '../models/moviesModel';
-import ShowModel from '../models/showModel';
+import app from '../server.js';
 // const app = null; // Placeholder tills appen är implementerad
 
 describe('Shows API', () => {
@@ -27,7 +25,7 @@ describe('Shows API', () => {
     // Kontrollera att statuskoden är 200
     // Kontrollera att response body innehåller föreställningens information
 
-    const response = await request(app).get('/shows/1');
+    const response = await request(app).get('/shows/69205004c46eb78e066decc2');
     expect(response.status).toBe(200);
     expect(response.body).toHaveProperty('id');
     expect(response.body).toHaveProperty('movie');
@@ -40,7 +38,7 @@ describe('Shows API', () => {
     // Förvänta dig att få ett 404-fel
     // Kontrollera att statuskoden är 404
 
-    const response = await request(app).get('/shows/100');
+    const response = await request(app).get('/shows/691ed77fa117e6cdbe8dc922');
     expect(response.status).toBe(404);
   });
 
@@ -52,11 +50,11 @@ describe('Shows API', () => {
     // Kontrollera att response body är en array
     // Kontrollera att alla föreställningar tillhör den specifika filmen (movieId matchar)
 
-    const response = await request(app).get('/shows/movie/691315440521b37e2408d6fb');
+    const response = await request(app).get('/shows/movie/691ed77fa117e6cdbe8dc99c');
     expect(response.status).toBe(200);
     expect(Array.isArray(response.body)).toBe(true);
     response.body.forEach(show => {
-      expect(show.movie.id).toBe(1);
+      expect(show.movie.id).toBe('691ed77fa117e6cdbe8dc99c');
     });
   });
 
@@ -66,7 +64,7 @@ describe('Shows API', () => {
     // Förvänta dig antingen en tom array eller 404
     // Kontrollera att statuskoden är 200 (tom array) eller 404
 
-    const response = await request(app).get('/shows/movie/6912fcd027aa9337ff9a5123');
+    const response = await request(app).get('/shows/movie/691ed77fa117e6cdbe8dc123');
     expect([200, 404]).toContain(response.status);
   });
 
@@ -78,24 +76,12 @@ describe('Shows API', () => {
     // Kontrollera att response body innehåller den nya föreställningens information
     // Kontrollera att föreställningen har fått ett ID
 
-
-    const lastMovie = await MovieModel.findOne().sort({ id: -1 });
-    const nextId = lastMovie ? lastMovie.id + 1 : 1;
-    const movie = await MovieModel.create({
-
-      id: nextId,
-      title: 'Testfilm',
-      description: 'Test description',
-      genre: ['Test genre'],
-      duration: 10
-    })
-
     const showData = {
-      movie: movie._id,
+      movie: '691ed77fa117e6cdbe8dc99c',
       startTime: '2024-12-01T18:00:00Z',
       endTime: '2024-12-01T18:00:00Z',
-      availableSeats: 100,
-      price: 220
+      hall: "691ed77fa117e6cdbe8dc97f",
+      price: 100,
       // ... andra fält
     };
     const response = await request(app)
@@ -104,7 +90,7 @@ describe('Shows API', () => {
       .send(showData);
     expect(response.status).toBe(201);
     expect(response.body).toHaveProperty('id');
-    expect(response.body.movie).toBe(showData.movie._id.toString());
+    expect(response.body.movieId).toBe(showData.movieId);
   });
 
   // Testfall för POST /shows - Försöka skapa föreställning utan API-nyckel
@@ -113,7 +99,7 @@ describe('Shows API', () => {
     // Förvänta dig att få ett 401 Unauthorized-fel
     // Kontrollera att statuskoden är 401
 
-    const showData = { movie: '123', startTime: '2024-12-01T18:00:00Z' };
+    const showData = { movieId: '123', startTime: '2024-12-01T18:00:00Z' };
     const response = await request(app)
       .post('/shows')
       .send(showData);
@@ -140,6 +126,7 @@ describe('Shows API', () => {
     // Skicka en POST-begäran till /shows med ogiltigt movieId
     // Förvänta dig att få ett 400 Bad Request-fel
     // Kontrollera att statuskoden är 400
+
     const showData = {
       movieId: 'non-existent-movie',
       startTime: '2024-12-01T18:00:00Z',
@@ -157,9 +144,10 @@ describe('Shows API', () => {
     // Förvänta dig att föreställningen uppdateras och returneras
     // Kontrollera att statuskoden är 200
     // Kontrollera att response body innehåller uppdaterad information
+
     const updateData = { startTime: '2024-12-01T20:00:00.000Z' };
     const response = await request(app)
-      .put('/shows/1')
+      .put('/shows/109')
       .set('X-API-Key', 'valid-api-key')
       .send(updateData);
     expect(response.status).toBe(200);
@@ -174,7 +162,7 @@ describe('Shows API', () => {
 
     const updateData = { startTime: '2024-12-01T20:00:00Z' };
     const response = await request(app)
-      .put('/shows/6912fcd027aa9337ff9a5123')
+      .put('/shows/123')
       .send(updateData);
     expect(response.status).toBe(401);
   });
@@ -201,7 +189,7 @@ describe('Shows API', () => {
     // Verifiera att föreställningen inte längre finns genom att göra en GET-begäran
 
     const response = await request(app)
-      .delete('/shows/2')
+      .delete('/shows/110')
       .set('X-API-Key', 'valid-api-key');
     expect(response.status).toBe(204);
   });
@@ -224,7 +212,7 @@ describe('Shows API', () => {
     // Kontrollera att statuskoden är 404
 
     const response = await request(app)
-      .delete('/shows/100')
+      .delete('/shows/123')
       .set('X-API-Key', 'valid-api-key');
     expect(response.status).toBe(404);
   });

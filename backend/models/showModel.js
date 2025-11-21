@@ -6,8 +6,6 @@ const showSchema = new mongoose.Schema({
     hall: { type: mongoose.Schema.Types.ObjectId, ref: 'Hall', required: true },
     startTime: { type: Date, required: true },
     endTime: { type: Date, required: true },
-    /*     availableSeats: { type: [String], required: true },
-        bookedSeats: { type: [String] }, */
     price: { type: Number, required: true }
 })
 

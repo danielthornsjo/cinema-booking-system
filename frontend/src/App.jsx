@@ -5,17 +5,15 @@ import Home from './pages/Home';
 import Movies from './pages/Movies';
 import Movie from './pages/Movie';
 import SeatPicker from './pages/SeatPicker';
-import { useEffect, useState } from 'react';
 import Login from './pages/Login';
+import AdminDashboard from './pages/AdminDashboard';
+import Bookings from './components/admin/Bookings';
+import Start from './components/admin/Start';
+import AdminMovies from './components/admin/AdminMovies'
+import AdminHalls from './components/admin/AdminHalls';
 
 function App() {
-  /*   const [bookings, setBookings] = useState([]);
-    useEffect(() => {
-      fetch("http://localhost:3000/bookings")
-        .then(res => res.json())
-        .then(data => setBookings(data)
-        )
-    }, []) */
+
 
   return (
     <>
@@ -27,10 +25,14 @@ function App() {
           <Route path="/movie/:movieId" element={<Movie />}></Route>
           <Route path="/seatpicker/:showId" element={<SeatPicker />}></Route>
           <Route path="/login" element={<Login />} />
+          <Route path="/admin" element={<AdminDashboard />}>
+            <Route path="start" element={<Start />} />
+            <Route path="bookings" element={<Bookings />} />
+            <Route path="movies" element={<AdminMovies />} />
+            <Route path="halls" element={<AdminHalls />} />
+          </Route>
         </Routes>
       </BrowserRouter>
-      {/* <p>{bookings.map(booking => (<p>{booking.email}</p>))}</p> */}
-
     </>
   )
 }

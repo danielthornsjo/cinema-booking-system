@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom"
 
 function Login() {
     return (
@@ -12,7 +13,9 @@ function Login() {
                         <label htmlFor="password" className="flex items-baseline w-30">Lösenord:</label>
                         <input type="password" name="password" id="password" className="bg-black border-2 border-gradient1 w-full p-2 rounded-xl outline-0 focus:border-purple-500 transition ease-in-out duration-300" />
                     </div>
-                    <button className="mt-2 w-full rounded-xl">Logga in</button>
+                    <Link to={`/admin`}>
+                        <button className="mt-2 w-full rounded-xl">Logga in</button>
+                    </Link>
                 </form >
             </section >
         </>

@@ -86,10 +86,15 @@ async function addNewBooking(req, res) {
 async function deleteBooking(req, res) {
     try {
         const { id } = req.params;
-        const booking = await BookingModel.findOne({ id }).populate({
+
+        const booking = await BookingModel.findById(id).populate({
             path: 'show',
             populate: { path: 'hall' }
         });
+
+        if (!booking) {
+            return res.status(404).json({ error: `Finns ingen bokning med id ${id}` })
+        }
 
         const hall = booking.show.hall;
         const seatsToFree = booking.seats;
@@ -102,7 +107,7 @@ async function deleteBooking(req, res) {
 
         await hall.save()
 
-        await BookingModel.deleteOne({ id })
+        await BookingModel.findByIdAndDelete(id)
 
         res.status(204).json(booking);
     } catch (err) {

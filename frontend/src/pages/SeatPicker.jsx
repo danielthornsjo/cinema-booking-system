@@ -51,23 +51,6 @@ function SeatPicker() {
         ...selectedShow.seats.map(seat => ({ id: seat.seatId, booked: seat.booked }))
     ]
 
-    /* Tar en platskod och delar upp den i ett objekt för att kunna användas till att sortera sätena efter rader och bokstäver */
-    /*     function parseSeat(seat) {
-            const match = seat.match(/^([A-Za-z]+)(\d+)$/);
-            return {
-                row: match[1],
-                num: parseInt(match[2], 10)
-            }
-        }
-     */
-    /* Sortera säten i radordning och sedan i nummerordning i varje rad */
-    /*     allSeats.sort((a, b) => {
-            const pa = parseSeat(a.id);
-            const pb = parseSeat(b.id);
-            if (pa.row === pb.row) return pa.num - pb.num;
-            return pa.row.localeCompare(pb.row)
-        }) */
-
     /* Toggle seat in seatpicker */
     const toggleSeat = (seat) => {
         setSelectedSeats((prev) => prev.includes(seat) ? prev.filter((s) => s !== seat) : [...prev, seat]);

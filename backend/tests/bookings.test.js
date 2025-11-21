@@ -1,52 +1,51 @@
 import request from 'supertest';
 
 // TODO: Importera din Express app här
-// import app from '../backend/app.js';
 import app from '../server.js';
 // const app = null; // Placeholder tills appen är implementerad
 
 describe('Bookings API', () => {
   // Testfall för GET /bookings - Hämta alla bokningar (kräver API-nyckel)
-  /*   it('should fetch all bookings with valid API key', async () => {
-      // Skicka en GET-begäran till /bookings med API-nyckel
-      // Förvänta dig att få en lista med bokningar
-      // Kontrollera att statuskoden är 200
-      // Kontrollera att response body är en array
-      // Kontrollera att varje bokning har nödvändiga fält (t.ex. name, email, showId, id)
-  
-      const response = await request(app)
-        .get('/bookings')
-        .set('X-API-Key', 'valid-api-key');
-      expect(response.status).toBe(200);
-      expect(Array.isArray(response.body)).toBe(true);
-    });
-  
-    // Testfall för GET /bookings - Hämta bokningar utan API-nyckel
-    it('should return 401 when fetching bookings without API key', async () => {
-      // Skicka en GET-begäran till /bookings utan API-nyckel
-      // Förvänta dig att få ett 401 Unauthorized-fel
-      // Kontrollera att statuskoden är 401
-  
-      const response = await request(app).get('/bookings');
-      expect(response.status).toBe(401);
-    });
-  
-    // Testfall för GET /bookings/:id - Hämta en specifik bokning (kräver API-nyckel)
-    it('should fetch a single booking by ID with valid API key', async () => {
-      // Skicka en GET-begäran till /bookings/:id med ett giltigt ID och API-nyckel
-      // Förvänta dig att få detaljer om en specifik bokning
-      // Kontrollera att statuskoden är 200
-      // Kontrollera att response body innehåller bokningens information
-  
-      const response = await request(app)
-        .get('/bookings/1003')
-        .set('X-API-Key', 'valid-api-key');
-      expect(response.status).toBe(200);
-      expect(response.body).toHaveProperty('id');
-      // expect(response.body).toHaveProperty('name');
-      expect(response.body).toHaveProperty('email');
-      expect(response.body).toHaveProperty('show');
-    }); */
+  it('should fetch all bookings with valid API key', async () => {
+    // Skicka en GET-begäran till /bookings med API-nyckel
+    // Förvänta dig att få en lista med bokningar
+    // Kontrollera att statuskoden är 200
+    // Kontrollera att response body är en array
+    // Kontrollera att varje bokning har nödvändiga fält (t.ex. name, email, showId, id)
+
+    const response = await request(app)
+      .get('/bookings')
+      .set('X-API-Key', 'valid-api-key');
+    expect(response.status).toBe(200);
+    expect(Array.isArray(response.body)).toBe(true);
+  });
+
+  // Testfall för GET /bookings - Hämta bokningar utan API-nyckel
+  it('should return 401 when fetching bookings without API key', async () => {
+    // Skicka en GET-begäran till /bookings utan API-nyckel
+    // Förvänta dig att få ett 401 Unauthorized-fel
+    // Kontrollera att statuskoden är 401
+
+    const response = await request(app).get('/bookings');
+    expect(response.status).toBe(401);
+  });
+
+  // Testfall för GET /bookings/:id - Hämta en specifik bokning (kräver API-nyckel)
+  it('should fetch a single booking by ID with valid API key', async () => {
+    // Skicka en GET-begäran till /bookings/:id med ett giltigt ID och API-nyckel
+    // Förvänta dig att få detaljer om en specifik bokning
+    // Kontrollera att statuskoden är 200
+    // Kontrollera att response body innehåller bokningens information
+
+    const response = await request(app)
+      .get('/bookings/1000')
+      .set('X-API-Key', 'valid-api-key');
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveProperty('id');
+    // expect(response.body).toHaveProperty('name');
+    expect(response.body).toHaveProperty('email');
+    expect(response.body).toHaveProperty('id');
+  });
 
   // Testfall för GET /bookings/:id - Hämta bokning utan API-nyckel
   it('should return 401 when fetching booking without API key', async () => {
@@ -65,7 +64,7 @@ describe('Bookings API', () => {
     // Kontrollera att statuskoden är 404
 
     const response = await request(app)
-      .get('/bookings/200')
+      .get('/bookings/1')
       .set('X-API-Key', 'valid-api-key');
     expect(response.status).toBe(404);
   });
@@ -79,12 +78,12 @@ describe('Bookings API', () => {
     // Kontrollera att alla bokningar tillhör den specifika föreställningen (showId matchar)
 
     const response = await request(app)
-      .get('/bookings/show/691df01c7cf88a817124c298')
+      .get('/bookings/show/691ed77fa117e6cdbe8dc9d1')
       .set('X-API-Key', 'valid-api-key');
     expect(response.status).toBe(200);
     expect(Array.isArray(response.body)).toBe(true);
     response.body.forEach(booking => {
-      expect(booking.show._id).toBe('691d7b90900b0036dd31006d');
+      expect(booking.show._id).toBe('691ed77fa117e6cdbe8dc9d1');
     });
   });
 
@@ -98,12 +97,11 @@ describe('Bookings API', () => {
     // Kontrollera att namn och email är korrekt sparade
 
     const bookingData = {
-      show: '691ed009556babfdaed4831c',
+      show: '691ed77fa117e6cdbe8dc9d2',
       // name: 'John Doe',
-      email: 'john4@example.com',
-      seats: ['A8'],
-      totalPrice: 100
-
+      email: 'john@example.com',
+      seats: ['A1', 'A2', 'A3'],
+      totalPrice: 300
       // ... andra fält
     };
     const response = await request(app)
@@ -123,9 +121,11 @@ describe('Bookings API', () => {
     // Kontrollera att statuskoden är 401
 
     const bookingData = {
-      show: '691df01c7cf88a817124c298',
-      name: 'John Doe',
-      email: 'john@example.com',
+      show: '691ed77fa117e6cdbe8dc9d1',
+      // name: 'John Doe',
+      email: 'john1@example.com',
+      seats: ['A4'],
+      totalPrice: 100
     };
     const response = await request(app)
       .post('/bookings')
@@ -192,11 +192,11 @@ describe('Bookings API', () => {
     // Kontrollera att felmeddelandet indikerar dubbelbokning
 
     const bookingData = {
-      show: '691ed009556babfdaed4831c',
-      // name: 'John Doe',
-      seats: ['A1', 'A2'],
+      show: '691ed77fa117e6cdbe8dc9d1',
+      name: 'John Doe',
       email: 'existing@example.com', // Denna kombination finns redan
-      totalPrice: 1
+      seats: ['A1'],
+      totalPrice: 100
     };
     const response = await request(app)
       .post('/bookings')
@@ -213,10 +213,10 @@ describe('Bookings API', () => {
     // Kontrollera att endast en bokning finns i systemet
 
     const bookingData = {
-      show: '691ed009556babfdaed4831c',
-      // name: 'John Doe',
-      seats: ['A1', 'A2'],
+      show: '691ed77fa117e6cdbe8dc9d1',
+      name: 'John Doe',
       email: 'john@example.com',
+      seats: ['A1'],
       totalPrice: 100
     };
     // Skapa första bokningen
@@ -240,7 +240,7 @@ describe('Bookings API', () => {
     // Verifiera att bokningen inte längre finns genom att göra en GET-begäran
 
     const response = await request(app)
-      .delete('/bookings/1004')
+      .delete('/bookings/69204850ec0c380c7b6977c9')
       .set('X-API-Key', 'valid-api-key');
     expect(response.status).toBe(204);
   });
@@ -252,7 +252,7 @@ describe('Bookings API', () => {
     // Kontrollera att statuskoden är 401
 
     const response = await request(app)
-      .delete('/bookings/1005');
+      .delete('/bookings/123');
     expect(response.status).toBe(401);
   });
 
@@ -263,7 +263,7 @@ describe('Bookings API', () => {
     // Kontrollera att statuskoden är 404
 
     const response = await request(app)
-      .delete('/bookings/non-existent-id')
+      .delete('/bookings/69204850ec0c380c7b6977c9')
       .set('X-API-Key', 'valid-api-key');
     expect(response.status).toBe(404);
   });

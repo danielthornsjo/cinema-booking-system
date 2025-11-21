@@ -49,13 +49,16 @@ async function addNewShow(req, res) {
     const lastShow = await ShowModel.findOne().sort({ id: -1 });
     const nextId = lastShow ? lastShow.id + 1 : 1;
 
-    const { movie, hall, startTime, endTime, availableSeats, bookedSeats, price } = req.body;
+    const { movie, hall, startTime, endTime, price } = req.body;
 
-    if (!movie || !startTime || !endTime || !price || !availableSeats) {
+    console.log(req.body);
+
+
+    if (!movie || !startTime || !endTime || !price) {
         return res.status(400).json({ error: 'Missing required fields.' })
     }
 
-    const newShow = await ShowModel.create({ id: nextId, movie: movie, hall: hall, startTime: startTime, endTime: endTime, availableSeats: availableSeats, bookedSeats: bookedSeats, price: price });
+    const newShow = await ShowModel.create({ id: nextId, movie: movie, hall: hall, startTime: startTime, endTime: endTime, price: price });
 
     if (!newShow) {
         res.status(404).json({ err: 'Error 404' });
