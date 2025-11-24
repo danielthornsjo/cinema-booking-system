@@ -23,10 +23,10 @@ function BookingCard({ selectedShow, selectedMovie }) {
                     <p className=""> {selectedShow.price} kr</p>
 
                     <p className="font-semibold ">Lediga platser:</p>
-                    <p className=""> {selectedShow.hall.seatMap.filter(seat => !seat.booked).length}</p>
+                    <p className=""> {selectedShow.seatMap.filter(seat => !seat.booked).length}</p>
 
                     <p className="font-semibold ">Bokade platser:</p>
-                    <p className=""> {selectedShow.hall.seatMap.filter(seat => seat.booked).length}</p>
+                    <p className=""> {selectedShow.seatMap.filter(seat => seat.booked).length}</p>
 
                     <Link to={`/seatpicker/${selectedShow.id}`} state={{ selectedShow, selectedMovie }} className="col-span-2 mt-4"><button className="w-full">Boka</button></Link>
                 </div >

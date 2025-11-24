@@ -1,4 +1,7 @@
+import HallModel from "../models/hallsModel.js";
+import MovieModel from "../models/moviesModel.js";
 import ShowModel from "../models/showModel.js";
+import { generateSeatMap } from "../utils/functions.js";
 
 async function getAllShows(req, res) {
     const shows = await ShowModel.find().populate('movie').populate('hall');
@@ -30,6 +33,7 @@ async function getMovieWithShow(req, res) {
         start: show.startTime,
         end: show.endTime,
         price: show.price,
+        seatMap: show.seatMap,
         hall: {
             id: show.hall._id,
             roomNumber: show.hall.roomNumber,
@@ -46,19 +50,36 @@ async function getMovieWithShow(req, res) {
 }
 
 async function addNewShow(req, res) {
-    const lastShow = await ShowModel.findOne().sort({ id: -1 });
-    const nextId = lastShow ? lastShow.id + 1 : 1;
+    const lastShow = await ShowModel.findOne().sort({ id: -1 }).populate('movie');
+    const nextId = lastShow ? lastShow.id + 1 : 100;
 
-    const { movie, hall, startTime, endTime, price } = req.body;
+    const { movie, hall, price, startTime } = req.body;
 
-    console.log(req.body);
+    const start = new Date(startTime)
+    const findMovie = await MovieModel.findOne({ _id: movie });
+    const endTime = new Date(start.getTime() + findMovie.duration * 60000);
 
-
-    if (!movie || !startTime || !endTime || !price) {
+    if (!movie || !start || !price) {
         return res.status(400).json({ error: 'Missing required fields.' })
     }
 
-    const newShow = await ShowModel.create({ id: nextId, movie: movie, hall: hall, startTime: startTime, endTime: endTime, price: price });
+    const hallData = await HallModel.findById(hall);
+
+    if (!hallData) {
+        return res.status(404).json({ error: 'Ingen salong hittades.' });
+    }
+
+    const seatMap = generateSeatMap(hallData.rows, hallData.capacity);
+
+    const newShow = await ShowModel.create({
+        id: nextId,
+        movie: movie,
+        hall: hall,
+        seatMap,
+        startTime: start,
+        endTime: endTime,
+        price: price
+    });
 
     if (!newShow) {
         res.status(404).json({ err: 'Error 404' });
@@ -69,8 +90,13 @@ async function addNewShow(req, res) {
 
 async function editShow(req, res) {
     const id = req.params.id;
+    const findMovie = await MovieModel.findById(req.body.movie || show.movie);
 
-    const show = await ShowModel.findOneAndUpdate({ id: id }, req.body, { new: true });
+    const start = new Date(req.body.startTime || show.startTime);
+    const endTime = new Date(start.getTime() + findMovie.duration * 60000)
+
+    console.log(endTime);
+    const show = await ShowModel.findByIdAndUpdate(id, { ...req.body, endTime }, { new: true });
 
     if (!show) {
         return res.status(404).json({ error: `Hittade ingen föreställning med id ${id}` })

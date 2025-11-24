@@ -11,13 +11,18 @@ function AdminHalls() {
 
     return (
         <>
-            {halls.map(hall =>
-                <div className=''>
-                    <p>Salong: {hall.roomNumber}</p>
-                    <p>Antal platser: {hall.seatMap.filter(seat => seat.seatId).length}</p>
+            <section className='flex flex-col gap-6 mx-auto w-full items-center'>
+                <h1 className='text-3xl w-full'>Salonger</h1>
+                <div className='flex gap-4'>
+                    {halls.map(hall =>
+                        <div className='border p-4'>
+                            <p>Salong: {hall.roomNumber}</p>
+                            <p>Antal platser: {hall.capacity}</p>
+                        </div>
+                    )}
                 </div>
-            )}
 
+            </section>
         </>
     )
 }

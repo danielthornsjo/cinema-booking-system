@@ -7,7 +7,7 @@ import Movie from './pages/Movie';
 import SeatPicker from './pages/SeatPicker';
 import Login from './pages/Login';
 import AdminDashboard from './pages/AdminDashboard';
-import Bookings from './components/admin/Bookings';
+import AdminBookings from './components/admin/AdminBookings';
 import Start from './components/admin/Start';
 import AdminMovies from './components/admin/AdminMovies'
 import AdminHalls from './components/admin/AdminHalls';
@@ -27,7 +27,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/admin" element={<AdminDashboard />}>
             <Route path="start" element={<Start />} />
-            <Route path="bookings" element={<Bookings />} />
+            <Route path="bookings" element={<AdminBookings />} />
             <Route path="movies" element={<AdminMovies />} />
             <Route path="halls" element={<AdminHalls />} />
           </Route>

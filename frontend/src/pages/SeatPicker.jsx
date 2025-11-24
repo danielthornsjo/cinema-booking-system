@@ -29,7 +29,7 @@ function SeatPicker() {
                     movieTitle: data.movie.title,
                     id: data._id,
                     room: data.hall.roomNumber,
-                    seats: data.hall.seatMap,
+                    seats: data.seatMap,
                     start: new Date(data.startTime).toLocaleString("sv-SE", {
                         dateStyle: "medium",
                         timeStyle: "short",

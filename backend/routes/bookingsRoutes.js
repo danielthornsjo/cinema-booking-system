@@ -8,7 +8,7 @@ router.get('/bookings', checkApiKey, bookingsController.getAllBookings);
 
 router.get('/bookings/:id', checkApiKey, bookingsController.getBookingById);
 
-router.post('/bookings', checkApiKey, bookingsController.addNewBooking);
+router.post('/bookings', /* checkApiKey, */ bookingsController.addNewBooking);
 
 router.delete('/bookings/:id', checkApiKey, bookingsController.deleteBooking);
 

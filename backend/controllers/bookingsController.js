@@ -2,7 +2,10 @@ import BookingModel from "../models/bookingsModel.js";
 import ShowModel from "../models/showModel.js";
 
 async function getAllBookings(req, res) {
-    const bookings = await BookingModel.find().populate('show');
+    const bookings = await BookingModel.find().populate({
+        path: 'show',
+        populate: { path: 'movie' }
+    });
 
     if (!bookings) {
         return res.status(404).json({ error: 'Hittade inga bokningar i databasen' });
@@ -14,7 +17,10 @@ async function getAllBookings(req, res) {
 async function getBookingById(req, res) {
     const { id } = req.params;
 
-    const booking = await BookingModel.findOne({ id: id });
+    const booking = await BookingModel.findOne({ id: id }).populate({
+        path: 'show',
+        populate: { path: 'movie' }
+    });
 
     if (!booking) {
         return res.status(404).json({ error: `Hittade ingen bokning med id ${id}` });
@@ -43,13 +49,13 @@ async function addNewBooking(req, res) {
             return res.status(409).json({ error: 'Bokning för vald show finns redan' })
         }
 
-        // Hämta specifik show och populate på salong för att kunna uppdatera seatMap för vald föreställning/film
-        const show1 = await ShowModel.findById(show).populate('hall');
-        const hall = show1.hall;
+        // Hämta specifik show för att kunna uppdatera seatMap för vald föreställning/film
+        const show1 = await ShowModel.findById(show);
+        const seatMap = show1.seatMap;
 
         // Kontrollera att valda platser inte redan är upptagna
-        for (const seatId of req.body.seats) {
-            const seat = hall.seatMap.find(s => s.seatId === seatId);
+        for (const seatId of seats) {
+            const seat = seatMap.find(s => s.seatId === seatId);
             if (!seat) continue;
 
             if (seat.booked) {
@@ -58,7 +64,7 @@ async function addNewBooking(req, res) {
         }
 
         // Mappar igenom varje plats i seatMap arrayen
-        hall.seatMap = hall.seatMap.map(seat => ({
+        show1.seatMap = seatMap.map(seat => ({
             // Kopiera allt från det gamla objektet seat
             ...seat,
             // Kontrollera om seatId finns bland de platser användare försöker boka
@@ -66,7 +72,7 @@ async function addNewBooking(req, res) {
             booked: req.body.seats.includes(seat.seatId) || seat.booked
         }));
 
-        await hall.save();
+        await show1.save();
 
         // Skapa ny bokning
         const newBooking = await BookingModel.create({
@@ -96,19 +102,17 @@ async function deleteBooking(req, res) {
             return res.status(404).json({ error: `Finns ingen bokning med id ${id}` })
         }
 
-        const hall = booking.show.hall;
+        const show = booking.show;
         const seatsToFree = booking.seats;
 
-        hall.seatMap = hall.seatMap.map(seat =>
+        show.seatMap = show.seatMap.map(seat =>
             seatsToFree.includes(seat.seatId)
                 ? { ...seat, booked: false }
                 : seat
         )
 
-        await hall.save()
-
+        await show.save()
         await BookingModel.findByIdAndDelete(id)
-
         res.status(204).json(booking);
     } catch (err) {
         res.status(500).json({ error: err.message })
