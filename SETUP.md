@@ -22,6 +22,7 @@ DB_URL= MongoDB url
 DB_USER= MongoDB användarnamn
 DB_PASSWORD= MongoDB lösenord
 PORT=3000
+VALID_API_KEY=valid_api_key
 ```
 
 4. Sedan kan man från rotkatalogen köra npm run dev-frontend för att starta frontend server, och npm run dev-backend för att starta backend server
