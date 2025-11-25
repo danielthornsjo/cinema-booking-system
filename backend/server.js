@@ -1,4 +1,4 @@
-import dotenv, { populate } from 'dotenv';
+import dotenv from 'dotenv';
 dotenv.config();
 
 import express from 'express';
@@ -6,7 +6,6 @@ import cors from 'cors';
 import mongoose from 'mongoose';
 import movieRoutes from './routes/moviesRoutes.js';
 import showRoutes from './routes/showsRoutes.js'
-import URI from './serverUri.js';
 import HallModel from './models/hallsModel.js';
 import bookingRoutes from './routes/bookingsRoutes.js'
 import seed from './seed.js';
@@ -45,7 +44,7 @@ app.get('/halls/:id', async (req, res) => {
     return res.status(200).json(hall)
 })
 
-mongoose.connect(process.env.DB_URL || URI)
+mongoose.connect(process.env.DB_URL)
     .then(() => {
         console.log('Connected to MongoDB');
         app.listen(process.env.PORT, () => { console.log(`Server listening on port ${process.env.PORT}`) })

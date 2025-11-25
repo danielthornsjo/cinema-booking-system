@@ -1,3 +1,7 @@
+### REQUEST för att tömma databasen och fylla på med data för att projektet ska fungera
+http://localhost:3000/reset/all
+x-api-key: valid-api-key
+
 Movies API Routes
 ### HÄMTA ALLA FILMER
 http://localhost:3000/movies
@@ -25,7 +29,7 @@ Content-Type: application/json
 
 ### UPPDATERA EN FILM
 // Fyll i "id" från en film från route /movies
-PUT http://localhost:3000/movies/16
+PUT http://localhost:3000/movies/:id
 x-api-key: valid-api-key
 Content-Type: application/json
 
@@ -53,9 +57,9 @@ Content-Type: application/json
 
 {
      // Fyll i "_id" från en film från route /movies
-    "movie": "69240d5b48b3be20481240cc",
+    "movie": "_id",
      // Fyll i "_id" från en salong från route /halls
-    "hall": "69240d5b48b3be20481240c6",
+    "hall": "_id",
     "price": 100,
     "startTime": "2025-12-01T18:00:00Z"
 }
@@ -67,7 +71,7 @@ x-api-key: valid-api-key
 Content-Type: application/json
 
 {
-    "price": 120 
+    "price": 90 
 }
 
 ### TA BORT EN FÖRESTÄLLNING
