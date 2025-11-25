@@ -20,27 +20,14 @@ router.get('/reset/all', checkApiKey, async (req, res) => {
         {
             id: hallId++,
             roomNumber: 1,
-            // Mappa upp rader och kör flat för att slå ihop till en array
             capacity: 18,
             rows: ['A', 'B']
-            /*             seatMap: ['A', 'B'].flatMap(row =>
-                            Array.from({ length: 9 }, (_, i) => ({
-                                seatId: `${row}${i + 1}`,
-                                booked: false
-                            }))
-                        ) */
         },
         {
             id: hallId++,
             roomNumber: 2,
             capacity: 27,
             rows: ['A', 'B', 'C']
-            /* seatMap: ['A', 'B', 'C'].flatMap(row =>
-                Array.from({ length: 9 }, (_, i) => ({
-                    seatId: `${row}${i + 1}`,
-                    booked: false
-                }))
-            ) */
         }
     ]
 
@@ -165,58 +152,6 @@ router.get('/reset/all', checkApiKey, async (req, res) => {
 
     const insertedShows = await ShowModel.insertMany(shows);
     console.log(`${insertedShows.length} shows skapade!`);
-
-
-    /*     // Skapa ett datum för att kunna räkna ut sluttid beronde på filmens speltid
-        const start = new Date('2025-11-11T14:30:00Z');
-    
-        const shows = [
-            {
-                id: showId++,
-                movie: findMovies[0]._id,
-                hall: findHalls[0]._id,
-                seatMap: rows.flatMap(row => Array.from(findHalls[0].capacity)),
-                startTime: start,
-                endTime: new Date(start.getTime() + findMovies[0].duration * 60000),
-                price: 120
-            },
-            {
-                id: showId++,
-                movie: findMovies[1]._id,
-                hall: findHalls[1]._id,
-                seatMap: findHalls[1],
-                startTime: start,
-                endTime: new Date(start.getTime() + findMovies[1].duration * 60000),
-                price: 100
-            }
-        ];
-    
-    
-    
-        console.log(findHalls[0].capacity); */
-
-
-    // const insertedShows = await ShowModel.insertMany(shows)
-
-    /*     let bookingId = 1000;
-    
-        await BookingModel.insertMany([
-            {
-                id: bookingId++,
-                email: "danielthornsjo@live.se",
-                show: insertedShows[0]._id,
-                seats: ['A1', 'A2'],
-                totalPrice: insertedShows[0].price * 2
-            },
-            {
-                id: bookingId++,
-                email: 'daniel@danielthornsjo.se',
-                show: insertedShows[1]._id,
-                seats: ['B1', 'B2', 'B3', 'B4'],
-                totalPrice: insertedShows[1].price * 4
-            }]);
-     */
-
 
     res.status(200).json({ message: 'Databasen är seedad' })
 });

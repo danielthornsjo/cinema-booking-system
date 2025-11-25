@@ -14,7 +14,6 @@ import AdminHalls from './components/admin/AdminHalls';
 
 function App() {
 
-
   return (
     <>
       <BrowserRouter>

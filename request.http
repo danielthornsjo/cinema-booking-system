@@ -1,0 +1,113 @@
+Movies API Routes
+### HÄMTA ALLA FILMER
+http://localhost:3000/movies
+
+### HÄMTA EN SPECIFIK FILM
+// Fyll i "_id"på en film från route /movies
+http://localhost:3000/movies/:id
+
+### SKAPA EN NY FILM
+POST http://localhost:3000/movies
+x-api-key: valid-api-key
+Content-Type: application/json
+
+{
+    "title": "testfilm",
+    "description": "test description",
+    "genre": ["Test genre"],
+    "duration": 60
+    // Dessa inputs är required
+    // "releaseDate": "",
+    // "posterUrl":"",
+    // "directors": [""],
+    // "cast": [""],
+}
+
+### UPPDATERA EN FILM
+// Fyll i "id" från en film från route /movies
+PUT http://localhost:3000/movies/16
+x-api-key: valid-api-key
+Content-Type: application/json
+
+{
+    "title": "Uppdaterad title"
+}
+
+### TA BORT EN FILM
+// Fyll i "id" från en film från route /movies
+DELETE http://localhost:3000/movies/:id
+x-api-key: valid-api-key
+
+Shows API Routes
+### HÄMTA ALLA FÖRESTÄLLNINGAR
+http://localhost:3000/shows
+
+### HÄMTA EN SPECIFIK FÖRESTÄLLNING
+// Fyll i "_id" från en show från route /shows
+http://localhost:3000/shows/:id
+
+### SKAPA EN NY FÖRESTÄLLNING
+POST http://localhost:3000/shows
+x-api-key: valid-api-key
+Content-Type: application/json
+
+{
+     // Fyll i "_id" från en film från route /movies
+    "movie": "69240d5b48b3be20481240cc",
+     // Fyll i "_id" från en salong från route /halls
+    "hall": "69240d5b48b3be20481240c6",
+    "price": 100,
+    "startTime": "2025-12-01T18:00:00Z"
+}
+
+### UPPDATERA EN FÖRESTÄLLNING
+// Fyll i "_id" från en föreställning från route /shows
+PUT http://localhost:3000/shows/:id
+x-api-key: valid-api-key
+Content-Type: application/json
+
+{
+    "price": 120 
+}
+
+### TA BORT EN FÖRESTÄLLNING
+// Fyll i "id" från en specifik föreställning
+DELETE http://localhost:3000/shows/:id
+x-api-key: valid-api-key
+
+Bookings API Routes
+### HÄMTA ALLA BOKNINGAR
+http://localhost:3000/bookings
+x-api-key: valid-api-key
+
+### HÄMTA EN SPECIFIK BOKNING
+// Fyll i "id" från en specifik bokning från route /bookings
+http://localhost:3000/bookings/:id
+x-api-key: valid-api-key
+
+### SKAPA EN NY BOKNING
+POST http://localhost:3000/bookings
+x-api-key: valid-api-key
+Content-Type: application/json
+
+{
+    "email": "test@test.se",
+    // Fyll i "_id" från en specifik föreställning
+    "show": "69256661c39bb0419a0be4a0",
+    "seats": ["A5", "A6"],
+    "totalPrice": 240
+}
+
+### UPPDATERA EN BOKNING
+// Fyll i "_id" från en specifik bokning från route /bookings
+PUT http://localhost:3000/bookings/:id
+x-api-key: valid-api-key
+Content-Type: application/json
+
+{
+    "seats": ["A1", "A2"]
+}
+
+### TA BORT EN BOKNING
+DELETE http://localhost:3000/bookings/:id
+x-api-key: valid-api-key

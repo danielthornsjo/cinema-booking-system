@@ -9,8 +9,6 @@ export function generateSeatMap(rows, capacity) {
                 booked: false
             })
         }
-
     }
-
     return seatMap;
 }

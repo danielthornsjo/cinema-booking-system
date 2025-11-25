@@ -7,7 +7,6 @@ import mongoose from 'mongoose';
 import movieRoutes from './routes/moviesRoutes.js';
 import showRoutes from './routes/showsRoutes.js'
 import URI from './serverUri.js';
-import BookingModel from './models/bookingsModel.js';
 import HallModel from './models/hallsModel.js';
 import bookingRoutes from './routes/bookingsRoutes.js'
 import seed from './seed.js';
@@ -23,17 +22,6 @@ app.use(seed);
 app.use(movieRoutes);
 app.use(showRoutes);
 app.use(bookingRoutes);
-
-
-app.get('/bookings/show/:id', /* checkApiKey */ async (req, res) => {
-    // Plocka ut id för show från req.params
-    const id = req.params.id;
-
-    // Hitta en bokning för specifik show med id från req.params
-    const showForBooking = await BookingModel.find({ show: id }).populate('show');
-
-    res.status(200).json(showForBooking);
-})
 
 
 app.get('/halls', async (req, res) => {

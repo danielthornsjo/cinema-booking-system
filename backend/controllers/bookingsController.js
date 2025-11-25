@@ -1,4 +1,5 @@
 import BookingModel from "../models/bookingsModel.js";
+import HallModel from "../models/hallsModel.js";
 import ShowModel from "../models/showModel.js";
 
 async function getAllBookings(req, res) {
@@ -27,6 +28,16 @@ async function getBookingById(req, res) {
     }
 
     res.status(200).json(booking)
+}
+
+async function getBookingWithShowId(req, res) {
+    // Plocka ut id för show från req.params
+    const id = req.params.id;
+
+    // Hitta en bokning för specifik show med id från req.params
+    const showForBooking = await BookingModel.find({ show: id }).populate('show');
+
+    res.status(200).json(showForBooking);
 }
 
 async function addNewBooking(req, res) {
@@ -89,6 +100,31 @@ async function addNewBooking(req, res) {
     }
 }
 
+async function editBooking(req, res) {
+    const id = req.params.id;
+    const { seats } = req.body;
+
+    const editBooking = await BookingModel.findById(id).populate('show');
+
+    if (!editBooking) return res.status(404).json({ error: `Hittade ingen bokning med id ${id}` });
+
+    editBooking.seats = seats;
+    await editBooking.save();
+
+    const allBookings = await BookingModel.find({ show: editBooking.show._id });
+
+    const bookedSeats = allBookings.flatMap(b => b.seats);
+
+    editBooking.show.seatMap = editBooking.show.seatMap.map(seat => ({
+        ...seat,
+        booked: bookedSeats.includes(seat.seatId)
+    }));
+
+    await editBooking.show.save();
+
+    res.status(200).json(editBooking)
+}
+
 async function deleteBooking(req, res) {
     try {
         const { id } = req.params;
@@ -123,5 +159,7 @@ export default {
     getAllBookings,
     getBookingById,
     addNewBooking,
-    deleteBooking
+    editBooking,
+    deleteBooking,
+    getBookingWithShowId
 }

@@ -44,7 +44,7 @@ async function addNewMovie(req, res) {
 }
 
 async function editMovieById(req, res) {
-    const id = parseInt(req.params.id);
+    const id = req.params.id;
 
     const movie = await MovieModel.findOneAndUpdate({ id: id }, req.body, { new: true });
 

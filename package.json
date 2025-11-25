@@ -1,0 +1,16 @@
+{
+  "name": "case-8-nodejs",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "setup": "cd frontend && npm install && cd ../backend && npm install",
+    "dev-frontend": "cd frontend && npm run dev",
+    "dev-backend": "cd backend && npm run dev",
+    "test": "cd backend && npm run test"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

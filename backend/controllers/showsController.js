@@ -89,20 +89,39 @@ async function addNewShow(req, res) {
 }
 
 async function editShow(req, res) {
-    const id = req.params.id;
-    const findMovie = await MovieModel.findById(req.body.movie || show.movie);
+    try {
+        const id = req.params.id;
+        const show = await ShowModel.findById(id);
 
-    const start = new Date(req.body.startTime || show.startTime);
-    const endTime = new Date(start.getTime() + findMovie.duration * 60000)
+        if (!show) {
+            return res.status(404).json({ error: `Hittade ingen föreställning med id ${id}` })
+        }
 
-    console.log(endTime);
-    const show = await ShowModel.findByIdAndUpdate(id, { ...req.body, endTime }, { new: true });
+        const findMovie = await MovieModel.findById(req.body.movie || show.movie);
 
-    if (!show) {
-        return res.status(404).json({ error: `Hittade ingen föreställning med id ${id}` })
+        const start = new Date(req.body.startTime || show.startTime);
+
+        const endTime = new Date(start.getTime() + findMovie.duration * 60000)
+
+        const updatedShow = await ShowModel.findByIdAndUpdate(
+            id,
+            {
+                ...req.body,
+                start,
+                endTime
+            }
+        )
+
+        res.status(200).json(updatedShow)
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Serverfel vid uppdatering av show' })
     }
 
-    res.status(200).json(show)
+
+
+
 }
 
 async function deleteShowWithId(req, res) {

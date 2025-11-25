@@ -27,7 +27,7 @@ function AdminMovies() {
                                 {movie.genre.join(", ")}
                             </p>
                             <p className='text-center'>
-                                {movie.releaseDate.slice(0, 10)}
+                                {movie.releaseDate?.slice(0, 10)}
                             </p>
                             <div className='flex gap-4 flex-end'>
                                 <button>Edit</button>
