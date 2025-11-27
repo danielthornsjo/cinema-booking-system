@@ -47,7 +47,7 @@ async function addNewBooking(req, res) {
 
         // Felmeddelande om fält inte är ifyllda
         if (!email || !show || !seats || !totalPrice) {
-            return res.status(400).json({ error: 'Missing required fields' });
+            return res.status(400).json({ error: 'Ett eller flera obligatoriska fält är tomma.' });
         }
 
         // Kolla id på senaste bokning och sätt +1 på nästkommande boknings id
@@ -91,7 +91,7 @@ async function addNewBooking(req, res) {
         });
 
         if (!newBooking) {
-            return res.status(404).json({ error: 'error 404' });
+            return res.status(404).json({ error: 'Kunde inte skapa ny bokning.' });
         }
 
         res.status(201).json(newBooking)
@@ -135,7 +135,7 @@ async function deleteBooking(req, res) {
         });
 
         if (!booking) {
-            return res.status(404).json({ error: `Finns ingen bokning med id ${id}` })
+            return res.status(404).json({ error: `Hittade ingen bokning med id ${id}` })
         }
 
         const show = booking.show;

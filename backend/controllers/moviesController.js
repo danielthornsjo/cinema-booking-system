@@ -13,7 +13,7 @@ async function getMovieById(req, res) {
     const movie = await MovieModel.findOne({ _id: id });
 
     if (!movie) {
-        return res.status(404).json({ error: `Filmen med id ${id} existerar inte` });
+        return res.status(404).json({ error: `Filmen med id ${id} existerar inte.` });
     }
     res.json(movie);
 }
@@ -26,7 +26,7 @@ async function addNewMovie(req, res) {
     const { title, description, genre, duration, releaseDate, posterUrl, directors, cast } = req.body;
 
     if (!title || !description || !genre || !duration) {
-        return res.status(400).json({ error: 'Missing required fields.' })
+        return res.status(400).json({ error: 'Ett eller flera obligatoriska fält är tomma.' })
     }
 
     try {
@@ -35,7 +35,7 @@ async function addNewMovie(req, res) {
         });
 
         if (!newMovie) {
-            res.status(404).json({ err: 'error 404' })
+            res.status(404).json({ error: 'Kunde inte skapa ny film.' })
         }
         res.status(201).json(newMovie)
     } catch (err) {

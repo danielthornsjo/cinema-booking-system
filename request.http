@@ -2,6 +2,9 @@
 http://localhost:3000/reset/all
 x-api-key: valid-api-key
 
+###
+http://localhost:3000/halls
+
 Movies API Routes
 ### HÄMTA ALLA FILMER
 http://localhost:3000/movies

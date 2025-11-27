@@ -6,6 +6,8 @@ import { generateSeatMap } from "../utils/functions.js";
 async function getAllShows(req, res) {
     const shows = await ShowModel.find().populate('movie').populate('hall');
 
+    if (!shows) return res.status(404).json({ error: 'Hittade inga föreställningar i databasen.' })
+
     res.status(200).json(shows);
 }
 
@@ -14,7 +16,7 @@ async function getShowWithId(req, res) {
     const show = await ShowModel.findOne({ _id: id }).populate('movie').populate('hall');
 
     if (!show) {
-        return res.status(404).json({ error: `Finns ingen show med id ${id}.` })
+        return res.status(404).json({ error: `Hittade ingen show med id ${id}.` })
     }
 
     res.status(200).json(show)
@@ -25,7 +27,7 @@ async function getMovieWithShow(req, res) {
     const showForMovie = await ShowModel.find({ movie: movieId }).populate('hall').populate('movie').lean();
 
     if (showForMovie.length === 0) {
-        return res.status(404).json({ error: 'Finns ingen show för filmen' })
+        return res.status(404).json({ error: 'Hittade ingen föreställning för vald film' })
     }
 
     const formatShow = showForMovie.map(show => ({
@@ -60,13 +62,13 @@ async function addNewShow(req, res) {
     const endTime = new Date(start.getTime() + findMovie.duration * 60000);
 
     if (!movie || !start || !price) {
-        return res.status(400).json({ error: 'Missing required fields.' })
+        return res.status(400).json({ error: 'Ett eller flera obligatoriska fält är tomma.' })
     }
 
     const hallData = await HallModel.findById(hall);
 
     if (!hallData) {
-        return res.status(404).json({ error: 'Ingen salong hittades.' });
+        return res.status(404).json({ error: 'Hittade ingen salong.' });
     }
 
     const seatMap = generateSeatMap(hallData.rows, hallData.capacity);
@@ -82,7 +84,7 @@ async function addNewShow(req, res) {
     });
 
     if (!newShow) {
-        res.status(404).json({ err: 'Error 404' });
+        res.status(404).json({ error: 'Kunde inte skapa ny föreställning.' });
     }
 
     res.status(201).json(newShow);
@@ -94,7 +96,7 @@ async function editShow(req, res) {
         const show = await ShowModel.findById(id);
 
         if (!show) {
-            return res.status(404).json({ error: `Hittade ingen föreställning med id ${id}` })
+            return res.status(404).json({ error: `Hittade ingen föreställning med id ${id}.` })
         }
 
         const findMovie = await MovieModel.findById(req.body.movie || show.movie);
@@ -116,7 +118,7 @@ async function editShow(req, res) {
 
     } catch (err) {
         console.error(err);
-        res.status(500).json({ error: 'Serverfel vid uppdatering av show' })
+        res.status(500).json({ error: 'Serverfel vid uppdatering av show.' })
     }
 
 
@@ -129,7 +131,7 @@ async function deleteShowWithId(req, res) {
     const show = await ShowModel.findOne({ id: id });
 
     if (!show) {
-        return res.status(404).json({ error: `Det finns ingen föreställning med id ${id} att ta bort.` });
+        return res.status(404).json({ error: `Hittade ingen föreställning med id ${id} att ta bort.` });
     }
 
     await ShowModel.deleteOne({ id: id });
