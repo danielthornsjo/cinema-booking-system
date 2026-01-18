@@ -9,7 +9,7 @@ function Movies() {
     /* Fetch för att rendera ut alla filmer i API:t */
     useEffect(() => {
         {
-            fetch(`http://localhost:3000/movies`)
+            fetch(`/api/movies`)
                 .then(res => res.json())
                 .then(data => setMovies(data)
                 );

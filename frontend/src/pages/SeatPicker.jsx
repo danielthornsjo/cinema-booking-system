@@ -21,7 +21,7 @@ function SeatPicker() {
     useEffect(() => {
         if (!showId) return;
 
-        fetch(`http://localhost:3000/shows/${showId}`)
+        fetch(`/api/shows/${showId}`)
             .then(res => res.json())
             .then(data => {
                 /* Format data for easier use */

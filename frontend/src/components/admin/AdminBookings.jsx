@@ -4,7 +4,7 @@ import AdminNav from './AdminNav';
 function Bookings() {
     const [bookings, setBookings] = useState([]);
     useEffect(() => {
-        fetch("http://localhost:3000/bookings", {
+        fetch("/api/bookings", {
             headers: { 'x-api-key': 'valid-api-key' }
         }
         )
@@ -14,7 +14,7 @@ function Bookings() {
     }, [])
 
     const deleteBooking = async (id) => {
-        const res = await fetch(`http://localhost:3000/bookings/${id}`, {
+        const res = await fetch(`/api/bookings/${id}`, {
             method: 'DELETE',
             headers: {
                 'x-api-key': 'valid-api-key',

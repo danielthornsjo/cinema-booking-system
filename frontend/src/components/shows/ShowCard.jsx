@@ -8,7 +8,7 @@ function ShowCard({ selectedMovie }) {
     useEffect(() => {
         if (!selectedMovie?._id) return;
 
-        fetch(`http://localhost:3000/shows/movie/${selectedMovie._id}`)
+        fetch(`/api/shows/movie/${selectedMovie._id}`)
             .then(res => res.json())
             .then(data => {
                 const formatted = data.map(show => ({

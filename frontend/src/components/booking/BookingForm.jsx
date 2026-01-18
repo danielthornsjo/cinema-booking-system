@@ -20,7 +20,7 @@ function BookingForm({ selectedShow, selectedSeats, selectedMovie, totalPrice })
         };
 
         try {
-            const response = await fetch("http://localhost:3000/bookings", {
+            const response = await fetch("/bookings", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(data),

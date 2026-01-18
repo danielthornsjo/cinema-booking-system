@@ -15,7 +15,7 @@ app.use(express.json());
 app.use(cors());
 
 // SEED FÖR ATT TÖMMA DATABASEN OCH FYLLA PÅ MED NY DATA
-app.use(seed);
+// app.use(seed);
 
 // ROUTES
 app.use(movieRoutes);

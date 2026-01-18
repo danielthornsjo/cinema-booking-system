@@ -10,7 +10,7 @@ function Movie() {
 
     /* Plocka ut Id från specifik film */
     useEffect(() => {
-        fetch(`http://localhost:3000/movies/${movieId}`)
+        fetch(`/api/movies/${movieId}`)
             .then(res => res.json())
             .then(data => setSelectedMovie(data));
     }, [movieId])

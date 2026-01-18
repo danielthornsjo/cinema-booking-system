@@ -4,10 +4,10 @@ function AdminHalls() {
     const [halls, setHalls] = useState([]);
 
     useEffect(() => {
-        fetch("http://localhost:3000/halls")
+        fetch("/api/halls")
             .then(res => res.json())
             .then(data => setHalls(data))
-    }, [halls])
+    }, [])
 
     return (
         <>
