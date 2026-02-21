@@ -1,4 +1,5 @@
-process.loadEnvFile();
+import dotenv from 'dotenv';
+dotenv.config();
 
 const VALID_API_KEY = process.env.VALID_API_KEY;
 

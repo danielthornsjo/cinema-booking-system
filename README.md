@@ -1,111 +1,79 @@
-# Case: Fullstack Cinema
+# Cinema Booking System (Fullstack)
 
-I detta caset ska ni fortsätta på er Bookningsapp för en biosalong. Den här gången ska ni har er egen backend bygg med node.js med hjälp av express webserver biblioteket samt React.js för en frontend.
+Ett modernt bokningsystem för biografer byggt med **Node.js, Express, React och MongoDB.** Systemet hanterar komplex logik för platsbokning, automatisk beräkning av speltider och dataintegritet mellan salonger, filmer och bokningar.
 
-## Krav
+### Nyckelfunktioner
 
-### Code minimum
+- **Dynamisk bokningslogik:** Validerar platstillgänglighet
+- **Automatiserad schemaläggning:** Beräknar sluttider baserat på filmernas längd och vald salong.
+- **MVC-arkitektur:** Tydlig separation mellan modeller, controllers och routes för hög underhållsmässighet.
+- **REST API:** Kraftfullt backend-gränssnitt med server-side validering.
 
-#### Allmänt
-* En README.md med **tydliga instruktioner** för hur man startar applikationen
-* Minst 10 git commits som visar att ni har arbetat med caset över tid
-* All information ska vara sparas till en databas i en mongodb databas
+---
 
-#### Backend
-* Backend ska ha en tydlig MVC struktur
-* Databasen ska vara mongodb (egen hostad lokalt eller mongodb.com)
-* **Routes för Movies API måste vara implementerade och alla tester i `tests/movies.test.js` ska passera**
-* **Routes för Shows API måste vara implementerade och alla tester i `tests/shows.test.js` ska passera**
-* **Routes för Bookings API måste vara implementerade och alla tester i `tests/bookings.test.js` ska passera**
-* En ny bokning [Resurs: Booking] ska registreras i databasen
-* En ny bokning [Resurs: Booking] ska kontrolleras sådan att dubbelbokningar inte kan ske
+### Installation & Uppstart
 
+1. **Klona ner repot**
 
-#### Frontend
-* Använd React Router Dom i React
-* Det ska vara möjligt att bläddra bland filmer som är tillgänglig på biografen [Resurs: Movie] via en react frontend
-* Vid val film ska man kunna se kommande föreställningar via en react frontend
-* Föreställningar [Resurs: Show] ska kunna bokas och meddela användaren via en react frontend
-
-* En användare av API:et måste använda en authentication token/nyckel för att göra en bokning
-
-
-### Code Utmaningar
-
-* Publicerad via Render, Vercel eller motsvarade
-* En loggfil `access.log` som skriver en ny rad med meningsfull information varje gång servern får en request. Ex. metod, url, och eventuell API-nyckel använd
-* Använd autentisering (ex jsonwebtoken eller API-token) som ger en användare möjlighet att lägga till eller redigera filmer och visningstillfällen i applikationen 
-* Det ska vara möjligt att navigera med tab på hemsidan
-* Användare ska kunna logga in för att se sina tidigare bokningar
-* Admin-panel för biograf-ägare som kan hantera föreställningar och filmer
-
-
-## Kom igång
-
-### Förslag till upplägg
-Min rekommendation är att ni har hela projektet i en map som ser ut som följande:
-
-```
-fullstack-project/
-	| .gitignore
-        | package.json
-	|----> frontend/     (ert react project - case 7)
-	|
-	|----> backend/      (ert nodejs project)
-    |----> server.js   (din huvvudfil för servern)
-		|----> tests/      (tester för API:et)
-		|----> routes/     (definitioner av routes)
-		|----> models/     (definitioner av modeller - BookingModel, MovieModel, ShowModel)
-		|----> controllers/  (definitioner av controller - BookingController, MovieController, ShowController)
+```bash
+git clone https://github.com/danielthornsjo/Case-8-Nodejs.git .
 ```
 
-### Kopiera tests-mappen
-För att komma igång med testerna behöver ni kopiera `tests`-mappen från case-repot till er backend-mapp. Detta gör ni genom att:
+2. **Installera beroenden & Setup**
+   Kör följande kommando i rotkatalogen (där `package.json` finns) för att installera både frontend och backend:
 
-1. Kopiera hela `tests`-mappen till er `backend`-mapp
-2. Navigera till `backend/tests`-mappen
-3. Uppdatera `package.json` i backend med innehållet i `tests`-mappen
-4. Installera dependencies: `npm install`
-5. Kör testerna: `npm run test`
-
-Testerna är för närvarande kommenterade och innehåller bara teststruktur. För att aktivera testerna:
-1. Importera er Express app i varje testfil (använd ES6 `import` syntax)
-2. Avkommentera testkoden
-3. Uppdatera routes och förväntningar baserat på er faktiska API-implementation
-
-### Setup-script
-I er översta `package.json` kan ni lägga till:
-
-```json
-{
-  "scripts": {
-    "setup": "cd frontend && npm install && cd ../backend && npm install",
-    "dev-frontend": "cd frontend && npm run dev",
-    "dev-backend": "cd backend && npm run dev",
-    "test": "cd backend && npm run test" // du kan också sköta scripten i backend för testning
-  }
-}
+```bash
+npm run setup
 ```
 
+3. **Konfigurera miljövariabler:**
+   Gå till `/backend`, kopiera `.env.example` till en ny fil döpt till `.env` och fyll i dina MongoDB-uppgifter:
 
-## Feedback
-Veckan efter presentation kommer feedback ges under följande rubriker:
+```bash
+DB_URL=din_mongodb_url
+DB_USER=ditt_användarnamn
+DB_PASSWORD=ditt_lösenord
+PORT=3000
+VALID_API_KEY=valfri_api_nyckel
+```
 
-- Backend
-- Frontend
-- Allmän kodstil
+4. **Starta applikationen:**
 
-*Designfeedback tillkommer från Mattias*
+- **Backend:** `npm run dev-backend`
+- **Frontend:** `npm run dev-frontend`
 
-## Uppföljande föreläsning
-Under arbetsperioden kommer enstaka uppföljande föreläsningar, troligtvis i anslutning till halvtidsredovisningen.  
+5. **Seeda databasen (Valfritt):**
+   För att snabbt komma igång med testdata, skicka ett HTTP-anrop för att återställa och populera databasen.
 
-## Presentation- och Inlämningsdatum
+`GET http://localhost:3000/reset/all` (kräver Header `x-api-key: din_api_nyckel`)
 
-- Halvtidsredovisning där ni visar hur långt ni har kommit är tisdagen den 19 november kl 10.25
-- Slutredovisning är onsdag-torsdag 27 november (tider fastslås senare)
-- Preliminärt: Efter slutredovisning kan den som vill finjustera projektet fram till söndagen den 1 december kl 23.59
-- Feedback ges under första veckan i december
+---
 
-I väntan på feedback arbetar ni under med er portfolio och göra klart gamla case.
-I december kommer vi boka in enskilda möten med samtliga deltagare för att ställa relevanta kunskapsfrågor. Ni behöver vara godkända på dessa frågor för att vara godkända på modulen.
+### Systemarkitektur & Datamodellering
+
+Applikationen är uppbyggd med strikta beroenden för att spegla ett verkligt biograf-flöde
+
+1. **Salonger (Halls):** Definierar fysisk layout (rader, stolar och total kapacitet).
+2. **Filmer (Movies):** Lagrar metadata inklusive speltid, vilket är kritiskt för schemaläggningen.
+3. **Föreställningar (Shows):** Kopplar samman film och salong. Backend beräknar automatiskt tillgängliga platser och tidsintervall baserat på filmens `_id` och salongens konfiguration.
+4. **Bokningar (Bookings):** Den slutgiltiga transaktionen som reserverar specifika platser och uppdaterar salongens status för den valda föreställningen.
+
+---
+
+### Aktuell status & Frontend
+
+Projektets tyngdpunkt har legat på att bygga en robust och logiskt sammanhängande backend.
+
+- **Backend:** Samtliga routes för CRUD-hantering av systemets resurser är fullt funktionella och testade.
+- **Frontend:** En adminpanel i React är under utveckling för att visualisera bokningsflödena.
+- **Nästa milstolpe:** Implementation av JWT-baserad autentisering för admin-inloggning.
+
+---
+
+### Kontakt & Demo
+
+- **Live Demo:** [cinema.danielthornsjo.se](https://cinema.danielthornsjo.se)
+- **Portfolio:** [danielthornsjo.se](https://danielthornsjo.se)
+- **LinkedIn:** [Daniel Thörnsjö](https://linkedin.com/in/danielthornsjo)
+
+---

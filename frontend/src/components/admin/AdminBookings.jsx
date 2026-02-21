@@ -14,7 +14,7 @@ function Bookings() {
     }, [])
 
     const deleteBooking = async (id) => {
-        const res = await fetch(`/api/bookings/${id}`, {
+        const res = await fetch(`/bookings/${id}`, {
             method: 'DELETE',
             headers: {
                 'x-api-key': 'valid-api-key',
